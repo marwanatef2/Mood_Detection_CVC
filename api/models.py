@@ -8,7 +8,7 @@ db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80), nullable=False)
+    # name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
 
 
@@ -19,7 +19,8 @@ class OAuth(OAuthConsumerMixin, db.Model):
 
 # setup login manager
 login_manager = LoginManager()
-login_manager.login_view = "facebook.login"
+# login_manager.login_view = "facebook.login"
+login_manager.login_view = "google.login"
 
 
 @login_manager.user_loader
