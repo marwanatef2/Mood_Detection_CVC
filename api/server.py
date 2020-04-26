@@ -19,7 +19,11 @@ app.register_blueprint(blueprint, url_prefix='/login')
 
 @app.route('/')
 def home():
-    return "hola"
+    if current_user.is_authenticated:
+        resp = google.get('/oauth2/v1/userinfo')
+        return resp.json() if resp.ok else False
+    else:
+        return {"LoggedIn": "Mybad"}
 
 
 @app.route('/about')
@@ -28,8 +32,14 @@ def about():
     return "hello " + current_user.email
 
 
+@app.route('/login')
+def login():
+    return redirect(url_for("google.login"))
+
+
 @app.route('/logout')
-@login_required
+# @login_required
 def logout():
     logout_user()
+    # return "logged out"
     return redirect(url_for('home'))
