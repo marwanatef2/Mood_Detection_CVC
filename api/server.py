@@ -36,6 +36,9 @@ def about():
 def login():
     return redirect(url_for("google.login"))
 
+@app.route('/zeez')
+def zeez():
+    return {"zeez": "gamiid"}
 
 @app.route('/logout')
 # @login_required
@@ -43,3 +46,4 @@ def logout():
     logout_user()
     # return "logged out"
     return redirect(url_for('home'))
+
