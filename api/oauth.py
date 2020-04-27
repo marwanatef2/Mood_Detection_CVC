@@ -22,6 +22,7 @@ def google_logged_in(blueprint, token):
     if not token:
         return False
 
+    # resp = blueprint.session.get("/me")
     resp = blueprint.session.get("/oauth2/v1/userinfo")
     if not resp.ok:
         return False
