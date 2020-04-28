@@ -2,19 +2,18 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Button, TextInput } from "react-native";
 import axios from "axios";
 import { Linking } from "expo";
+import Navigator from "./routes/homeStack";
 
 export default function App() {
   const [username, setUsername] = useState("");
 
   const getUserInfo = () => {
-    Linking.openURL("http://156.204.46.17:5000/login");
+    Linking.openURL("https://marwanatef2.pythonanywhere.com/login");
     //
-    // axios
-    //   .get("http://10.0.2.2:5000/zeez")
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     console.log("zeez");
-    //   })
+    // axios.get("https://marwanatef2.pythonanywhere.com/login").then((res) => {
+    //   console.log(res.data);
+    //   console.log("zeez");
+    // });
     //   .catch((err) => {
     //     console.log(err);
     //   });
@@ -29,15 +28,7 @@ export default function App() {
     setUsername(text);
     console.log(username);
   };
-  return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.textInput}
-        onChangeText={(text) => onChangeText(text)}
-      />
-      <Button title="submit" onPress={getUserInfo} />
-    </View>
-  );
+  return <Navigator />;
 }
 
 const styles = StyleSheet.create({
