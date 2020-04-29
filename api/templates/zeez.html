@@ -5,6 +5,20 @@
     <title>zeez</title>
   </head>
   <body>
-    <a href="exp://192.168.1.110:19000?hello=worldzeez">My app</a>
+    <p id="name">{{userinfo["name"]}}</p>
+    <p id="email">{{userinfo["email"]}}</p>
+    <!-- <p id="name">{{userinfo["name"]}}</p> -->
+
+    <!-- <a href="exp://192.168.1.110:19000?hello=worldzeez">My app</a> -->
+
+    <script>
+      let name = document.getElementById("name").textContent;
+      let email = document.getElementById("email").textContent;
+
+      if (name !== "" && email !== "")
+        window.location.replace(
+          `exp://192.168.1.110:19000?hello=worldzeez&name=${name}&email=${email}`
+        );
+    </script>
   </body>
 </html>

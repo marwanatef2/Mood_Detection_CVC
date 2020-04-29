@@ -17,7 +17,9 @@ app.register_blueprint(blueprint, url_prefix='/login')
 @app.route('/')
 def home():
     if current_user.is_authenticated:
-        return "hello " + current_user.email
+        resp = google.get('/oauth2/v1/userinfo')
+        if resp.ok:
+            return render_template('zeez.html', userinfo = resp.json())
     else:
         return "hello nobody"
 
@@ -35,10 +37,6 @@ def login():
     # return redirect(url_for("facebook.login"))
     return redirect(url_for("google.login"))
 
-@app.route('/login/google/authorized')
-def logged_in():
-    resp = google.get('/oauth2/v1/userinfo')
-    return resp.json() if resp.ok else False
 
 @app.route('/zeez')
 def zeez():
