@@ -3,21 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <title>zeez</title>
+    <style>
+      p {
+        visibility: hidden;
+      }
+    </style>
   </head>
   <body>
     <p id="name">{{userinfo["name"]}}</p>
     <p id="email">{{userinfo["email"]}}</p>
-    <!-- <p id="name">{{userinfo["name"]}}</p> -->
+    <p id="picture">{{userinfo["picture"]}}</p>
 
     <!-- <a href="exp://192.168.1.110:19000?hello=worldzeez">My app</a> -->
 
     <script>
       let name = document.getElementById("name").textContent;
       let email = document.getElementById("email").textContent;
+      let picture = document.getElementById("picture").textContent;
 
-      if (name !== "" && email !== "")
+      if (name !== "" && email !== "" && picture !== "")
         window.location.replace(
-          `exp://192.168.1.110:19000?hello=worldzeez&name=${name}&email=${email}`
+          `exp://192.168.1.110:19000?hello=worldzeez&name=${name}&email=${email}&pic=${picture}`
         );
     </script>
   </body>
