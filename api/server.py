@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect, url_for, render_template
 from flask_login import login_required, logout_user, current_user
 from models import db, login_manager
 from oauth import blueprint
@@ -38,7 +38,7 @@ def login():
 
 @app.route('/zeez')
 def zeez():
-    return "<a href='exp://192.168.1.110:19000'>My app</a>"
+    return render_template('zeez.html')
 
 
 @app.route('/logout')
@@ -47,4 +47,3 @@ def logout():
     logout_user()
     # return "logged out"
     return redirect(url_for('home'))
-
