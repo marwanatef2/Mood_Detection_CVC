@@ -15,16 +15,17 @@ import {
 
 export default function home({ navigation }) {
   const handleSignUp = () => {
-    // axios.get("https://marwanatef2.pythonanywhere.com/login").then(result);
-    // navigation.navigate("Home");
-    // console.log(Linking.makeUrl("path/into/app"));
-    WebBrowser.openBrowserAsync("https://marwanatef2.pythonanywhere.com/zeez");
-    console.log("zeez in linking");
-    // Linking.openURL("exp://192.168.1.110:19000");
+    WebBrowser.openBrowserAsync("https://marwanatef2.pythonanywhere.com/login");
   };
   Linking.addEventListener("url", (url) => {
-    let { path, queryParams } = Linking.parse(url);
-    console.log(path, queryParams);
+    let { path, queryParams } = Linking.parse(url.url);
+    let loggedUser = {
+      name: queryParams["name"],
+      email: queryParams["email"],
+      picture: queryParams["pic"],
+    };
+
+    navigation.navigate("Profile", loggedUser);
   });
 
   return (
@@ -33,8 +34,19 @@ export default function home({ navigation }) {
       style={styles.container}
     >
       <View style={styles.titlePage}>
-        <Text style={{ fontSize: 45, color: "#000" }}>Login Page</Text>
-        <Text style={{ fontSize: 13, fontWeight: "100", color: "#666" }}>
+        <Text
+          style={{ fontSize: 45, color: "#000", fontFamily: "nunito-bold" }}
+        >
+          Login Page
+        </Text>
+        <Text
+          style={{
+            fontSize: 13,
+            fontWeight: "100",
+            color: "#666",
+            fontFamily: "nunito-regular",
+          }}
+        >
           By Team : TITO
         </Text>
       </View>
@@ -44,7 +56,14 @@ export default function home({ navigation }) {
           style={{ ...styles.button, flexDirection: "row" }}
         >
           <AntDesign name="google" size={20} style={{ color: "white" }} />
-          <Text style={{ fontSize: 20, marginLeft: 10, color: "#fff" }}>
+          <Text
+            style={{
+              fontSize: 20,
+              marginLeft: 10,
+              color: "#fff",
+              fontFamily: "nunito-regular",
+            }}
+          >
             Sign up with Google
           </Text>
         </TouchableOpacity>

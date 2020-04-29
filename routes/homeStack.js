@@ -1,20 +1,35 @@
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
+import { createBottomTabNavigator } from "react-navigation-tabs";
 import Home from "../screens/home";
 import login from "../screens/login";
-
+import Profile from "../screens/profile";
+import Header from "../shared/header";
+import React from "react";
 const screens = {
   Home: {
     screen: Home,
-    navigationOptions: {
-      title: "TITO",
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: () => <Header navigation={navigation} title="TITO" />,
+      };
     },
   },
 
   Login: {
     screen: login,
-    navigationOptions: {
-      title: "Login",
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: () => <Header navigation={navigation} title="LogIn" />,
+      };
+    },
+  },
+  Profile: {
+    screen: Profile,
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: () => <Header navigation={navigation} title="Profile" />,
+      };
     },
   },
 };

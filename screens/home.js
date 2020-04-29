@@ -10,7 +10,7 @@ import {
   ImageBackground,
 } from "react-native";
 
-export default function home({ navigation }) {
+export default function home({ route, navigation }) {
   return (
     <ImageBackground
       source={require("../assets/backg.jpg")}
@@ -18,7 +18,14 @@ export default function home({ navigation }) {
     >
       <View style={styles.titlePage}>
         <View style={styles.iconHolder}>
-          <Text style={{ fontSize: 45, color: "#fff", marginRight: 15 }}>
+          <Text
+            style={{
+              fontSize: 45,
+              color: "#fff",
+              marginRight: 15,
+              fontFamily: "nunito-bold",
+            }}
+          >
             Mood Detector
           </Text>
           <Ionicons name="md-sad" size={45} style={styles.icon} />
@@ -30,7 +37,14 @@ export default function home({ navigation }) {
           <Ionicons name="md-happy" size={45} style={styles.icon} />
         </View>
 
-        <Text style={{ fontSize: 13, fontWeight: "100", color: "#ddd" }}>
+        <Text
+          style={{
+            fontSize: 13,
+            fontWeight: "100",
+            color: "#ddd",
+            fontFamily: "nunito-regular",
+          }}
+        >
           By Team : TITO
         </Text>
       </View>
@@ -41,6 +55,7 @@ export default function home({ navigation }) {
             alignSelf: "center",
             fontSize: 20,
             color: "#fff",
+            fontFamily: "nunito-regular",
           }}
         >
           Login:{" "}

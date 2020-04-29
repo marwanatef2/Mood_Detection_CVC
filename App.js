@@ -1,10 +1,18 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+import * as Font from "expo-font";
 import axios from "axios";
-import { Linking } from "expo";
+import { Linking, AppLoading } from "expo";
 import Navigator from "./routes/homeStack";
 
+const getFonts = () =>
+  Font.loadAsync({
+    "nunito-regular": require("./assets/fonts/Nunito-Regular.ttf"),
+    "nunito-bold": require("./assets/fonts/Nunito-SemiBold.ttf"),
+  });
+
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
   const [username, setUsername] = useState("");
 
   const getUserInfo = () => {
@@ -29,7 +37,13 @@ export default function App() {
     console.log(username);
   };
 
-  return <Navigator />;
+  if (fontsLoaded) {
+    return <Navigator />;
+  } else {
+    return (
+      <AppLoading startAsync={getFonts} onFinish={() => setFontsLoaded(true)} />
+    );
+  }
 }
 
 const styles = StyleSheet.create({
