@@ -35,6 +35,10 @@ def login():
     # return redirect(url_for("facebook.login"))
     return redirect(url_for("google.login"))
 
+@app.route('/login/google/authorized')
+def logged_in():
+    resp = google.get('/oauth2/v1/userinfo')
+    return resp.json() if resp.ok else False
 
 @app.route('/zeez')
 def zeez():
