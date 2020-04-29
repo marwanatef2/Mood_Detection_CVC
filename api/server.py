@@ -38,7 +38,7 @@ def login():
 
 @app.route('/zeez')
 def zeez():
-    return "<a href='https://www.google.com'>Google</a>"
+    return "<a href='exp://192.168.1.110:19000'>My app</a>"
 
 
 @app.route('/logout')

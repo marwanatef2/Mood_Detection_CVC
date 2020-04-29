@@ -22,10 +22,11 @@
       "intentFilters": [
         {
           "action": "VIEW",
-          "autoVerify": true,
           "data": [
             {
-              "scheme": "zeez"
+              "scheme": "https",
+              "host": "*.myapp.io",
+              "pathPrefix": "/records"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]

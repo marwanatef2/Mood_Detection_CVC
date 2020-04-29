@@ -16,7 +16,7 @@ export default function home({ navigation }) {
   const handleSignUp = () => {
     // axios.get("https://marwanatef2.pythonanywhere.com/login").then(result);
     // navigation.navigate("Home");
-    console.log(Linking.makeUrl());
+    console.log(Linking.makeUrl("path/into/app"));
     // WebBrowser.openBrowserAsync("https://marwanatef2.pythonanywhere.com/login");
     console.log("zeez in linking");
     // Linking.openURL("exp://192.168.1.110:19000");
