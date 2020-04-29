@@ -10,17 +10,22 @@ import {
   Button,
   TouchableOpacity,
   ImageBackground,
+  Alert,
 } from "react-native";
 
 export default function home({ navigation }) {
   const handleSignUp = () => {
     // axios.get("https://marwanatef2.pythonanywhere.com/login").then(result);
     // navigation.navigate("Home");
-    console.log(Linking.makeUrl("path/into/app"));
-    // WebBrowser.openBrowserAsync("https://marwanatef2.pythonanywhere.com/login");
+    // console.log(Linking.makeUrl("path/into/app"));
+    WebBrowser.openBrowserAsync("https://marwanatef2.pythonanywhere.com/zeez");
     console.log("zeez in linking");
     // Linking.openURL("exp://192.168.1.110:19000");
   };
+  Linking.addEventListener("url", (url) => {
+    let { path, queryParams } = Linking.parse(url);
+    console.log(path, queryParams);
+  });
 
   return (
     <ImageBackground

@@ -28,6 +28,7 @@ export default function App() {
     setUsername(text);
     console.log(username);
   };
+
   return <Navigator />;
 }
 
