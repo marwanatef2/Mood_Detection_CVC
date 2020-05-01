@@ -4,6 +4,7 @@ from models import db, login_manager
 from oauth import blueprint
 # from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.contrib.google import make_google_blueprint, google
+import urllib.request
 
 app = Flask(__name__)
 db.init_app(app)
@@ -50,7 +51,9 @@ def logout():
     # return "logged out"
     return redirect(url_for('home'))
 
-@app.route('/uri' , methods=['POST'])
+@app.route('/uri' , methods=['GET'])
 def uri():
     data = request.get_json()
-    return jsonify(data['uri'])
+
+ 
+    return render_template('video.html',data=data['uri'])
