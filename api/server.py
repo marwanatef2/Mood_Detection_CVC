@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for, render_template, request, jsonify
 from flask_login import login_required, logout_user, current_user
 from models import db, login_manager
 from oauth import blueprint
@@ -49,3 +49,8 @@ def logout():
     logout_user()
     # return "logged out"
     return redirect(url_for('home'))
+
+@app.route('/uri' ,methods=['POST'])
+def uri():
+    data = request.json
+    return jsonify(data)
