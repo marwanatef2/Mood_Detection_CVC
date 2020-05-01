@@ -52,5 +52,5 @@ def logout():
 
 @app.route('/uri' , methods=['POST'])
 def uri():
-    data = request.json
-    return jsonify(data)
+    data = request.get_json()
+    return jsonify(data['uri'])
