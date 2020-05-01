@@ -7,10 +7,10 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 
-export default function Buttons({}) {
+export default function Buttons({ start }) {
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity style={styles.start}>
+      <TouchableOpacity style={styles.start} onPress={start}>
         <Text
           style={{
             fontFamily: "nunito-regular",

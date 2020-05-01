@@ -24,6 +24,10 @@ export default function Profile({ navigation }) {
     setUser(null);
     navigation.popToTop();
   };
+
+  const start = () => {
+    navigation.navigate("Camera");
+  };
   if (user != null)
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -46,7 +50,7 @@ export default function Profile({ navigation }) {
           </TouchableOpacity>
           <View style={styles.content}>
             <Content name={user.name} pic={user.pic} />
-            <Buttons returnHome={returnHome} />
+            <Buttons returnHome={returnHome} start={start} />
           </View>
           <FriendsList style={{}} />
         </View>
