@@ -50,7 +50,7 @@ def logout():
     # return "logged out"
     return redirect(url_for('home'))
 
-@app.route('/uri' ,methods=['POST'])
+@app.route('/uri' , methods=['POST'])
 def uri():
     data = request.json
     return jsonify(data)

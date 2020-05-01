@@ -7,6 +7,7 @@ import {
   Dimensions,
   Button,
 } from "react-native";
+import axios from 'axios';
 
 import { Camera } from "expo-camera";
 
@@ -37,11 +38,26 @@ export default function caamera() {
 
   const takeVideo = async () => {
     if (cameraRef) {
-      const { uri } = await cameraRef.recordAsync({
+    await cameraRef.recordAsync({
         // maxDuration: 3,
+
+      
+      }).then(data=>{
+        await axios.post('/user', {
+          uri: data.uri,
+          lastName: 'Zeez'
+        })
+          .then(function (response) {
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log(error);
+          })
       });
 
-      setPhoto(uri);
+      
+
+      // setPhoto(uri);
       console.log("video : ", uri);
     }
   };
