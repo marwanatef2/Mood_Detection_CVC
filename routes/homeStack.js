@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 import Home from "../screens/home";
 import login from "../screens/login";
 import Profile from "../screens/profile/profile";
-import Camera from "../screens/camera";
+import Camera from "../screens/camera/camera";
 import Header from "../shared/header";
 import React from "react";
 const screens = {

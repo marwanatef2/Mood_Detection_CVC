@@ -54,6 +54,4 @@ def logout():
 @app.route('/uri' , methods=['GET'])
 def uri():
     data = request.get_json()
-
- 
     return render_template('video.html',data=data['uri'])

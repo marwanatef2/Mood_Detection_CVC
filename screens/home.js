@@ -15,11 +15,18 @@ export default function home({ route, navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   useEffect(() => {
     (async () => {
-      console.log("in use effect");
-      const { status } = await Permissions.getAsync(Permissions.CAMERA);
+      console.log("effect");
+      const { status } = await Permissions.getAsync(
+        Permissions.CAMERA,
+        Permissions.CAMERA_ROLL
+      );
       setHasPermission(status === "granted");
+      console.log(hasPermission);
     })();
   }, []);
+  if (hasPermission) console.log("got it");
+  else console.log("nope");
+
   return (
     <ImageBackground
       source={require("../assets/backg.jpg")}
