@@ -1,9 +1,10 @@
-from flask import Flask, redirect, url_for, render_template
+from flask import Flask, redirect, url_for, render_template, request, jsonify
 from flask_login import login_required, logout_user, current_user
 from models import db, login_manager, User
 from oauth import blueprint
 # from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.contrib.google import make_google_blueprint, google
+import urllib.request
 
 app = Flask(__name__)
 db.init_app(app)
@@ -102,3 +103,9 @@ def database():
     users = marwan.followers
     names = [user.name for user in users]
     return {'users': names}
+
+
+@app.route('/uri', methods=['GET'])
+def uri():
+    data = request.get_json()
+    return render_template('video.html', data=data['uri'])

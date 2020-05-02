@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import {
@@ -9,8 +9,24 @@ import {
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
+import * as Permissions from "expo-permissions";
 
 export default function home({ route, navigation }) {
+  const [hasPermission, setHasPermission] = useState(null);
+  useEffect(() => {
+    (async () => {
+      console.log("effect");
+      const { status } = await Permissions.getAsync(
+        Permissions.CAMERA,
+        Permissions.CAMERA_ROLL
+      );
+      setHasPermission(status === "granted");
+      console.log(hasPermission);
+    })();
+  }, []);
+  if (hasPermission) console.log("got it");
+  else console.log("nope");
+
   return (
     <ImageBackground
       source={require("../assets/backg.jpg")}

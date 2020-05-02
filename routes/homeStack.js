@@ -3,12 +3,13 @@ import { createAppContainer } from "react-navigation";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import Home from "../screens/home";
 import login from "../screens/login";
-import Profile from "../screens/profile";
+import Profile from "../screens/profile/profile";
+import Camera from "../screens/camera/camera";
 import Header from "../shared/header";
 import React from "react";
 const screens = {
   Home: {
-    screen: Home,
+    screen: Camera,
     navigationOptions: ({ navigation }) => {
       return {
         headerTitle: () => <Header navigation={navigation} title="TITO" />,
@@ -29,6 +30,14 @@ const screens = {
     navigationOptions: ({ navigation }) => {
       return {
         headerTitle: () => <Header navigation={navigation} title="Profile" />,
+      };
+    },
+  },
+  Camera: {
+    screen: Camera,
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: () => <Header navigation={navigation} title="Challenge" />,
       };
     },
   },
