@@ -11,8 +11,9 @@ from scipy.spatial import distance as dist
 from imutils.video import VideoStream, FPS
 from imutils import face_utils
 import imutils
-import time
+from datetime import datetime
 import dlib
+
 
 # return Mouth Aspect Ratio (vertical : horizontal)
 def smile_mar(mouth):
@@ -24,13 +25,14 @@ def smile_mar(mouth):
     mar = avg/D
     return mar
 
+
 def calc_video_score(video_path=None):
     points = 0
 
     # Create the model
     model = Sequential()
 
-    model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48,48,1)))
+    model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48, 48, 1)))
     model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
@@ -53,7 +55,8 @@ def calc_video_score(video_path=None):
     cv2.ocl.setUseOpenCL(False)
 
     # dictionary which assigns each label an emotion (alphabetical order)
-    emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
+    emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful",
+                    3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
 
     # detecting "mouth" on "face"
     shape_predictor = "shape_predictor_68_face_landmarks.dat"
@@ -66,7 +69,9 @@ def calc_video_score(video_path=None):
     cap = cv2.VideoCapture(video_path)
     # cap = cv2.VideoCapture(0)
     fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    output_video = cv2.VideoWriter('output2.avi',fourcc, 20.0, (640,480))
+    video_path = './videos/'
+    video_title = video_path + datetime.now().strftime('%a %d-%b-%Y %I-%M%p') + '.avi'
+    output_video = cv2.VideoWriter(video_title, fourcc, 20.0, (640, 480))
 
     while cap.isOpened():
         # capture frames from video
@@ -77,11 +82,11 @@ def calc_video_score(video_path=None):
         # Find haar cascade to draw bounding box around face
         facecasc = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        faces = facecasc.detectMultiScale(gray,scaleFactor=1.3, minNeighbors=5)
+        faces = facecasc.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
 
         # detect faces for smile detection
         rects = detector(gray, 0)
-        
+
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y-50), (x+w, y+h+10), (255, 0, 0), 2)
             roi_gray = gray[y: y+h, x: x+w]
@@ -89,7 +94,8 @@ def calc_video_score(video_path=None):
             cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray, (48, 48)), -1), 0)
             prediction = model.predict(cropped_img)
             maxindex = int(np.argmax(prediction))
-            cv2.putText(frame, emotion_dict[maxindex], (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(frame, emotion_dict[maxindex], (x+20, y-60),
+                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
             for rect in rects:
                 shape = predictor(gray, rect)
@@ -98,16 +104,17 @@ def calc_video_score(video_path=None):
                 mar = smile_mar(mouth)
                 mouthHull = cv2.convexHull(mouth)
                 cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
-                
+
                 # incrementing score for "happy" mood detection and smiling/laughing
                 if emotion_dict[maxindex] == 'Happy':
                     if mar <= 0.3:
                         points += 2
-                    elif mar > 0.4 :
+                    elif mar > 0.4:
                         points += 5
 
-                cv2.putText(frame, "Score: {}".format(points), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-            
+                cv2.putText(frame, "Score: {}".format(points), (10, 30),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+
         output_video.write(frame)
         # cv2.imshow('Video', cv2.resize(frame,(1000,600),interpolation = cv2.INTER_CUBIC))
         # if cv2.waitKey(1) & 0xFF == ord('q'):

@@ -105,6 +105,15 @@ def database():
     return {'users': names}
 
 
+@app.route('/video/<path>')
+def video(path):
+    from video_processing.smile import calc_video_score
+    data = request.get_json()
+    uri = data['uri']
+    score = calc_video_score(uri)
+    return {'score': score}
+
+
 @app.route('/uri', methods=['GET'])
 def uri():
     data = request.get_json()
