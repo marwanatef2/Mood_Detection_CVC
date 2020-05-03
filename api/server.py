@@ -5,6 +5,7 @@ from oauth import blueprint
 # from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.contrib.google import make_google_blueprint, google
 import urllib.request
+from operator import itemgetter
 
 app = Flask(__name__)
 db.init_app(app)
@@ -39,8 +40,11 @@ def logout():
 
 
 # @login_required
-@app.route('/<myemail>/follow/<email>')
-def follow_user(myemail, email):
+@app.route('/follow/', methods=['POST'])
+def follow_user():
+    data = request.get_json()
+    myemail = data['myemail']
+    email = data['email']
     me = User.query.filter_by(email=myemail).first()
     user = User.query.filter_by(email=email).first()
     # if user is not None and user != current_user:
@@ -53,8 +57,29 @@ def follow_user(myemail, email):
 
 
 # @login_required
-@app.route('/<myemail>/unfollow/<email>')
-def unfollow_user(myemail, email):
+@app.route('/addfriend', methods=['POST'])
+def add_friend():
+    data = request.get_json()
+    myemail = data['myemail']
+    email = data['email']
+    me = User.query.filter_by(email=myemail).first()
+    user = User.query.filter_by(email=email).first()
+    # if user is not None and user != current_user:
+    if user is not None and user != me:
+        # current_user.follow(user)
+        me.follow(user)
+        user.follow(me)
+        db.session.commit()
+        return {'added': True}
+    return {'added': False}
+
+
+# @login_required
+@app.route('/unfollow/', methods=['POST'])
+def unfollow_user():
+    data = request.get_json()
+    myemail = data['myemail']
+    email = data['email']
     me = User.query.filter_by(email=myemail).first()
     user = User.query.filter_by(email=email).first()
     # if user is not None and user != current_user:
@@ -67,27 +92,68 @@ def unfollow_user(myemail, email):
 
 
 # @login_required
-@app.route('/<myemail>/friends')
-@app.route('/<myemail>/following')
-def followed_users(myemail):
+@app.route('/remove/', methods=['POST'])
+def remove_friend():
+    data = request.get_json()
+    myemail = data['myemail']
+    email = data['email']
+    me = User.query.filter_by(email=myemail).first()
+    user = User.query.filter_by(email=email).first()
+    # if user is not None and user != current_user:
+    if user is not None and user != me:
+        # current_user.unfollow(user)
+        me.unfollow(user)
+        user.unfollow(me)
+        db.session.commit()
+        return {'unfollowed': True}
+    return {'unfollowed': False}
+
+
+# @login_required
+@app.route('/following', methods=['POST'])
+def followed_users():
+    data = request.get_json()
+    myemail = data['myemail']
     me = User.query.filter_by(email=myemail).first()
     # following = current_user.following
     following = me.following
     users = []
     for followed in following:
         users.append({'name': followed.name, 'email': followed.email})
-    return {'users': users}
+    sorted_users = sorted(users, key=itemgetter('name'))
+    return {'users': sorted_users}
 
 
-@app.route('/<myemail>/followers')
-def followers(myemail):
+# @login_required
+@app.route('/followers', methods=['POST'])
+def followers():
+    data = request.get_json()
+    myemail = data['myemail']
     me = User.query.filter_by(email=myemail).first()
     # following = current_user.following
-    following = me.followers
+    followers = me.followers
+    users = []
+    for follower in followers:
+        users.append({'name': follower.name, 'email': follower.email})
+    sorted_users = sorted(users, key=itemgetter('name'))
+    return {'users': sorted_users}
+
+
+@app.route('/friends', methods=['POST'])
+def friends():
+    data = request.get_json()
+    myemail = data['myemail']
+    me = User.query.filter_by(email=myemail).first()
+    # following = current_user.following
+    followers = me.followers
+    following = me.following
     users = []
     for followed in following:
         users.append({'name': followed.name, 'email': followed.email})
-    return {'users': users}
+    for follower in followers:
+        users.append({'name': follower.name, 'email': follower.email})
+    sorted_users = sorted(users, key=itemgetter('name'))
+    return {'users': sorted_users}
 
 
 @app.route('/db')
@@ -105,7 +171,7 @@ def database():
     return {'users': names}
 
 
-@app.route('/video',methods=['POST'])
+@app.route('/video', methods=['POST'])
 def video():
     # from video_processing.smile import calc_video_score
     # from werkzeug.utils import secure_filename
