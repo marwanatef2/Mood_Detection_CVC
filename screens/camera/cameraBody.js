@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-  Button,
-  StyleSheet,
-} from "react-native";
+import { Text, View, Dimensions, StyleSheet } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 
 import axios from "axios";
@@ -35,21 +27,42 @@ export default function Cbody() {
   const takeVideo = async () => {
     if (cameraRef) {
       const { uri } = await cameraRef.recordAsync({
-        // maxDuration: 3,
+        maxDuration: 1,
+      });
+      console.log("uri :", uri);
+      // const data = await axios.post("http://192.168.1.110:5000/video", {
+      //   uri: uri,
+      //   lastName: "Zeez",
+      // });
+      let url = "http://192.168.1.110:5000/video";
+      let formData = new FormData();
+      formData.append("zeez", 5);
+      formData.append("videoFile", {
+        name: "zeez".mp4,
+        uri: uri,
+        type: "video/mp4",
       });
 
-      // const { data } = await axios.post(
-      //   "https://marwanatef2.pythonanywhere.com/uri",
-      //   {
-      //     uri: uri,
-      //     lastName: "Zeez",
-      //   }
-      // );
+      let response = await fetch(url, {
+        method: "post",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: {
+          name: "zeez",
+        },
+      });
+      // let z = await response.json();
+
+      console.log("result", response);
+
+      // console.log("data :", data);
 
       // setPhoto(uri);
-      console.log("video lnk : ", uri);
-      const { status } = await MediaLibrary.requestPermissionsAsync();
-      await MediaLibrary.saveToLibraryAsync(uri);
+      // console.log("video lnk : ", uri);
+      // const { status } = await MediaLibrary.requestPermissionsAsync();
+      // const data = await MediaLibrary.saveToLibraryAsync(uri);
+      // console.log(data);
     }
   };
 
@@ -67,7 +80,7 @@ export default function Cbody() {
   const onUpdate = (ps) => {
     if (ps.didJustFinish && !ps.isLooping) {
       // The player has just finished playing and will stop. Maybe you want to play something else?
-      stopVideo();
+      // stopVideo();
     }
   };
   return (
@@ -86,7 +99,7 @@ export default function Cbody() {
           ref={handelVideoRef}
           source={require("../../assets/videos/blog.mp4")}
           shouldPlay
-          resizeMode="contain"
+          resizeMode="cover"
           style={{ width, height: "100%" }}
           onLoadStart={() => takeVideo()}
           useNativeControls={true}

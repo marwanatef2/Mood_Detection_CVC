@@ -6,7 +6,6 @@ import {
   TouchableWithoutFeedback,
   ImageBackground,
   TouchableOpacity,
-  Dimensions,
   Keyboard,
 } from "react-native";
 import Content from "./content";

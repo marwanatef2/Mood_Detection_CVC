@@ -28,6 +28,7 @@ def smile_mar(mouth):
 
 def calc_video_score(video_path=None):
     points = 0
+    mean = []
 
     # Create the model
     model = Sequential()
@@ -102,6 +103,7 @@ def calc_video_score(video_path=None):
                 face = face_utils.shape_to_np(shape)
                 mouth = face[mStart:mEnd]
                 mar = smile_mar(mouth)
+                mean.append(mar)
                 mouthHull = cv2.convexHull(mouth)
                 cv2.drawContours(frame, [mouthHull], -1, (0, 255, 0), 1)
 
@@ -109,7 +111,7 @@ def calc_video_score(video_path=None):
                 if emotion_dict[maxindex] == 'Happy':
                     if mar <= 0.3:
                         points += 2
-                    elif mar > 0.4:
+                    elif mar > 0.35:
                         points += 5
 
                 cv2.putText(frame, "Score: {}".format(points), (10, 30),
@@ -124,4 +126,6 @@ def calc_video_score(video_path=None):
     output_video.release()
     cv2.destroyAllWindows()
 
+    mean = np.array(mean)
+    avg = np.mean(mean)
     return points

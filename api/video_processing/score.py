@@ -1,7 +1,8 @@
 from smile import calc_video_score
-
-score = calc_video_score('output.avi')
-print("final score: ", score)
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+score, avg = calc_video_score('test.avi')
+print("final score: ", score, "avg mar: ", avg)
 
 
 # import numpy as np
@@ -11,14 +12,14 @@ print("final score: ", score)
 
 # # Define the codec and create VideoWriter object
 # fourcc = cv2.VideoWriter_fourcc(*'XVID')
-# out = cv2.VideoWriter('output.avi',fourcc, 20.0, (640,480))
+# out = cv2.VideoWriter('test.avi', fourcc, 20.0, (640, 480))
 
 # while(cap.isOpened()):
 #     ret, frame = cap.read()
-#     if ret==True:
+#     if ret == True:
 #         out.write(frame)
 
-#         cv2.imshow('frame',frame)
+#         cv2.imshow('frame', frame)
 #         if cv2.waitKey(1) & 0xFF == ord('q'):
 #             break
 #     else:

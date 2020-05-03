@@ -1,16 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { Linking } from "expo";
-import axios from "axios";
+
 import * as WebBrowser from "expo-web-browser";
 import {
   StyleSheet,
   Text,
   View,
-  Button,
   TouchableOpacity,
   ImageBackground,
-  Alert,
 } from "react-native";
 
 export default function home({ navigation }) {

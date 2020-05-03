@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, Button, TextInput } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
 import * as Font from "expo-font";
-import axios from "axios";
+
 import { Linking, AppLoading } from "expo";
 import Navigator from "./routes/homeStack";
 

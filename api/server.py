@@ -107,14 +107,22 @@ def database():
 
 @app.route('/video',methods=['POST'])
 def video():
-    from video_processing.smile import calc_video_score
-    data = request.get_json()
-    uri = data['uri']
-    score = calc_video_score(uri)
-    return {'score': score}
+    # from video_processing.smile import calc_video_score
+    # from werkzeug.utils import secure_filename
+    # video = request.files['videoFile']
+    # print(len(request.files))
+    # for x, y in request.files.items():
+    #     print((x, y))
+    print(type(request.form['videoFile']))
+    return 'zeez'
+    # video_name = secure_filname(video.filename)
+    # video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
+    # return "successful"
+    # score = calc_video_score(uri)
+    # return {'score': score}
 
 
-@app.route('/uri', methods=['GET'])
-def uri():
-    data = request.get_json()
-    return render_template('video.html', data=data['uri'])
+# @app.route('/uri', methods=['GET'])
+# def uri():
+#     data = request.get_json()
+#     return render_template('video.html', data=data['uri'])

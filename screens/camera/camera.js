@@ -1,15 +1,7 @@
 import React, { useState } from "react";
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-  Button,
-} from "react-native";
+import { Text, View, Dimensions, Button } from "react-native";
 import Cbody from "./cameraBody";
 
-import axios from "axios";
 import { Camera } from "expo-camera";
 
 import { Video } from "expo-av";
@@ -29,10 +21,6 @@ export default function caamera() {
   const takePicture = async () => {
     if (cameraRef) {
       const { uri } = await cameraRef.takePictureAsync();
-      // console.log(uri);
-      // const uri = await CameraRoll.saveToCameraRoll(uri);
-      // console.log(uri);
-      // console.log("captured");
       setPhoto(uri);
     }
   };
