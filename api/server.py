@@ -105,8 +105,8 @@ def database():
     return {'users': names}
 
 
-@app.route('/video/<path>')
-def video(path):
+@app.route('/video',methods=['POST'])
+def video():
     from video_processing.smile import calc_video_score
     data = request.get_json()
     uri = data['uri']
