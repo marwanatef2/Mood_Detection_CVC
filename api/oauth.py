@@ -29,12 +29,14 @@ def google_logged_in(blueprint, token):
 
     user_info = resp.json()
     user_email = user_info["email"]
+    user_name = user_info["name"]
+    
 
-    query = User.query.filter_by(email=user_email)
+    query = User.query.filter_by(email=user_email, name=user_name)
     try:
         user = query.one()
     except NoResultFound:
-        user = User(email=user_email)
+        user = User(email=user_email, name=user_name)
 
     db.session.add(user)
     db.session.commit()
