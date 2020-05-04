@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
+from datetime import datetime
 
 
 db = SQLAlchemy()
@@ -23,6 +24,8 @@ class User(UserMixin, db.Model):
                                 primaryjoin=(followers.c.follower_id == id),
                                 secondaryjoin=(followers.c.followed_id == id),
                                 backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    notifications = db.relationship('Notification', backref='user', lazy=True)
+    last_checked = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     def __repr__(self):
         return '<User {}>'.format(self.email)
@@ -44,6 +47,13 @@ class User(UserMixin, db.Model):
 class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
     user = db.relationship(User)
+
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    body = db.Column(db.Text, nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False)
 
 
 # setup login manager
