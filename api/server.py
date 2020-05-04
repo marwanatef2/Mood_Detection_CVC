@@ -207,10 +207,7 @@ def database():
     marwan = User(name='marwan', email='marwan@rdq.com', score=10)
     db.session.add_all([marwan, ziad, mido, zeez, samir])
     db.session.commit()
-<<<<<<< HEAD
-=======
 
->>>>>>> 323c61b8c37d3611099bab1cb1db9a53f02e250c
     return "successful"
 
 
