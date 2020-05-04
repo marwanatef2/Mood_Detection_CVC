@@ -1,11 +1,12 @@
 from flask import Flask, redirect, url_for, render_template, request, jsonify
 from flask_login import login_required, logout_user, current_user
-from models import db, login_manager, User
+from models import db, login_manager, User, Notification
 from oauth import blueprint
 # from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.contrib.google import make_google_blueprint, google
 import urllib.request
 from operator import itemgetter
+from datetime import datetime
 
 app = Flask(__name__)
 db.init_app(app)
@@ -40,17 +41,20 @@ def logout():
 
 
 # @login_required
-@app.route('/follow/', methods=['POST'])
+@app.route('/follow', methods=['POST'])
 def follow_user():
     data = request.get_json()
     myemail = data['myemail']
     email = data['email']
     me = User.query.filter_by(email=myemail).first()
     user = User.query.filter_by(email=email).first()
+    body = "{} started following you".format(me.name)
+    notification = Notification(body=body, user=user, date_created=datetime.now())
     # if user is not None and user != current_user:
     if user is not None and user != me:
         # current_user.follow(user)
         me.follow(user)
+        db.session.add(notification)
         db.session.commit()
         return {'followed': True}
     return {'followed': False}
@@ -64,18 +68,21 @@ def add_friend():
     email = data['email']
     me = User.query.filter_by(email=myemail).first()
     user = User.query.filter_by(email=email).first()
+    body = "You are now a friend of {}".format(me.name)
+    notification = Notification(body=body, user=user, date_created=datetime.now())
     # if user is not None and user != current_user:
     if user is not None and user != me:
         # current_user.follow(user)
         me.follow(user)
         user.follow(me)
+        db.session.add(notification)
         db.session.commit()
         return {'added': True}
     return {'added': False}
 
 
 # @login_required
-@app.route('/unfollow/', methods=['POST'])
+@app.route('/unfollow', methods=['POST'])
 def unfollow_user():
     data = request.get_json()
     myemail = data['myemail']
@@ -92,7 +99,7 @@ def unfollow_user():
 
 
 # @login_required
-@app.route('/remove/', methods=['POST'])
+@app.route('/remove', methods=['POST'])
 def remove_friend():
     data = request.get_json()
     myemail = data['myemail']
@@ -110,6 +117,7 @@ def remove_friend():
 
 
 # @login_required
+@app.route('/friends', methods=['POST'])
 @app.route('/following', methods=['POST'])
 def followed_users():
     data = request.get_json()
@@ -139,36 +147,37 @@ def followers():
     return {'users': sorted_users}
 
 
-@app.route('/friends', methods=['POST'])
-def friends():
+@app.route('/notifications', methods=['POST'])
+def notifications():
     data = request.get_json()
     myemail = data['myemail']
     me = User.query.filter_by(email=myemail).first()
-    # following = current_user.following
-    followers = me.followers
-    following = me.following
-    users = []
-    for followed in following:
-        users.append({'name': followed.name, 'email': followed.email})
-    for follower in followers:
-        users.append({'name': follower.name, 'email': follower.email})
-    sorted_users = sorted(users, key=itemgetter('name'))
-    return {'users': sorted_users}
+    my_notifications = me.notifications
+    notifications = []
+    for notification in my_notifications:
+        notifications.append(
+            {'body': notification.body, 'datetime': notification.date_created.strftime('%d/%m %I:%M%p'), 'new': notification.date_created > me.last_checked})
+    notifications.reverse()
+    me.last_checked = datetime.now()
+    db.session.commit()
+    return {'notifications': notifications}
 
 
 @app.route('/db')
 def database():
-    # db.drop_all()
-    # db.create_all()
-    marwan = User.query.filter_by(name='Marwan').first()
-    # zeez = User.query.filter_by(name='Zeez').first()
-    # samir = User.query.filter_by(name='Samir').first()
-    salma = User.query.filter_by(name='Salma').first()
-    salma.follow(marwan)
+    db.drop_all()
+    db.create_all()
+    # marwan = User.query.get(1)
+    # body = 'khara test notification'
+    # notification = Notification(body=body, user=marwan)
+    mido = User(name='mido', email='mido@rdq.com')
+    zeez = User(name='zeez', email='zeez@rdq.com')
+    samir = User(name='samir', email='samir@rdq.com')
+    ziad = User(name='ziad', email='ziad@rdq.com')
+    marwan = User(name='marwan', email='marwan@rdq.com')
+    db.session.add_all([marwan, ziad, mido, zeez, samir])
     db.session.commit()
-    users = marwan.followers
-    names = [user.name for user in users]
-    return {'users': names}
+    return "successful"
 
 
 @app.route('/video', methods=['POST'])
