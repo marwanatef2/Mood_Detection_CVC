@@ -180,19 +180,27 @@ def database():
     return "successful"
 
 
+<<<<<<< HEAD
+
+
+
+@app.route('/video',methods=['POST'])
+=======
 @app.route('/video', methods=['POST'])
+>>>>>>> 5cfb0dc1dfd53e61b44b761d8789249119fd4487
 def video():
     # from video_processing.smile import calc_video_score
-    # from werkzeug.utils import secure_filename
+    from werkzeug.utils import secure_filename
+    import os
     # video = request.files['videoFile']
-    # print(len(request.files))
-    # for x, y in request.files.items():
-    #     print((x, y))
-    print(type(request.form['videoFile']))
-    return 'zeez'
-    # video_name = secure_filname(video.filename)
-    # video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
-    # return "successful"
+    if 'video' not in request.files:
+        return  {'zeez':'not found'}
+
+    video =request.files['video']
+    
+    video_name = secure_filename(video.filename)
+    video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
+    return "successful"
     # score = calc_video_score(uri)
     # return {'score': score}
 
