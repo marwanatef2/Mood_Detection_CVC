@@ -177,13 +177,8 @@ def database():
     marwan = User(name='marwan', email='marwan@rdq.com')
     db.session.add_all([marwan, ziad, mido, zeez, samir])
     db.session.commit()
-<<<<<<< HEAD
-    users = marwan.followers
-    names = [user.name for user in users]
-    return {'users': names}
-=======
+
     return "successful"
->>>>>>> c240dbd44ed181d1764b33886e5e0d005909a19d
 
 
 @app.route('/video', methods=['POST'])
