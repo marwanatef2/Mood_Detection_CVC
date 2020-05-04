@@ -163,6 +163,36 @@ def notifications():
     return {'notifications': notifications}
 
 
+# @login_required
+@app.route('/leaderboard', methods=['POST'])
+def leaderboard():
+    data = request.get_json()
+    myemail = data['myemail']
+    me = User.query.filter_by(email=myemail).first()
+    # following = current_user.following
+    following = me.following
+    users = []
+    for followed in following:
+        users.append({'name': followed.name, 'email': followed.email,
+                      'image': followed.image, 'score': followed.score})
+    users.append({'name': me.name, 'email': me.email,
+                  'image': me.image, 'score': me.score})
+    sorted_users = sorted(users, key=itemgetter('score'), reverse=True)
+    return {'users': sorted_users}
+
+
+# @login_required
+@app.route('/scoreboard', methods=['GET'])
+def global_scoreboard():
+    db_users = User.query.all()
+    users = []
+    for user in db_users:
+        users.append({'name': user.name, 'email': user.email,
+                      'image': user.image, 'score': user.score})
+    sorted_users = sorted(users, key=itemgetter('score'), reverse=True)
+    return {'users': sorted_users}
+
+
 @app.route('/db')
 def database():
     db.drop_all()
@@ -170,11 +200,11 @@ def database():
     # marwan = User.query.get(1)
     # body = 'khara test notification'
     # notification = Notification(body=body, user=marwan)
-    mido = User(name='mido', email='mido@rdq.com')
-    zeez = User(name='zeez', email='zeez@rdq.com')
-    samir = User(name='samir', email='samir@rdq.com')
-    ziad = User(name='ziad', email='ziad@rdq.com')
-    marwan = User(name='marwan', email='marwan@rdq.com')
+    mido = User(name='mido', email='mido@rdq.com', score=5)
+    zeez = User(name='zeez', email='zeez@rdq.com', score=100)
+    samir = User(name='samir', email='samir@rdq.com', score=5)
+    ziad = User(name='ziad', email='ziad@rdq.com', score=4)
+    marwan = User(name='marwan', email='marwan@rdq.com', score=10)
     db.session.add_all([marwan, ziad, mido, zeez, samir])
     db.session.commit()
 

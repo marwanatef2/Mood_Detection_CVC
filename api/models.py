@@ -19,7 +19,7 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     image = db.Column(db.String(200), unique=True)
-    score = db.Column(db.Integer)
+    score = db.Column(db.Integer, default=0)
     following = db.relationship('User', secondary=followers,
                                 primaryjoin=(followers.c.follower_id == id),
                                 secondaryjoin=(followers.c.followed_id == id),
