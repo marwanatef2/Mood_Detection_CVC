@@ -171,14 +171,7 @@ def database():
     return {'users': names}
 
 
-<<<<<<< HEAD
-
-
-
-@app.route('/video',methods=['POST'])
-=======
 @app.route('/video', methods=['POST'])
->>>>>>> 5cfb0dc1dfd53e61b44b761d8789249119fd4487
 def video():
     # from video_processing.smile import calc_video_score
     from werkzeug.utils import secure_filename
