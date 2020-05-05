@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,22 +7,45 @@ import {
   FlatList,
   Button,
 } from "react-native";
-import Friend from "./freind";
-export default function friendsList({ returnHome }) {
-  const [friendName, setFriendName] = useState("");
+import axios from "axios";
 
+import Friend from "./freind";
+export default function friendsList({ returnHome, loggedEmail }) {
+  const [friendName, setFriendName] = useState("");
+  const [response, setResponse] = useState(false);
+  const [friends, setFriends] = useState([]);
   const setName = (name) => {
     setFriendName(name);
-    console.log(friendName);
+    // console.log(friendName);
   };
-  const friends = [
-    { name: "Zeez", key: 1 },
-    { name: "Marwan", key: 2 },
-    { name: "Salma B", key: 3 },
-    { name: "Salma D", key: 4 },
-    { name: "Samir", key: 5 },
-    { name: "Samir", key: 6 },
-  ];
+
+  const handleAddFriend = async () => {
+    axios
+      .post("https://marwanatef2.pythonanywhere.com/addfriend", {
+        myemail: loggedEmail,
+        email: friendName,
+      })
+      .then((res) => {
+        console.log("logged mail", loggedEmail);
+        console.log("friend mail", friendName);
+        console.log(res.data.added);
+        setResponse(res.data.added);
+      });
+  };
+  useEffect(() => {
+    // console.log("Logged user", loggedEmail);
+    async function fetchFriends() {
+      axios
+        .post("https://marwanatef2.pythonanywhere.com/friends", {
+          myemail: loggedEmail,
+        })
+        .then((res) => {
+          setFriends(res.data.users);
+        });
+    }
+
+    fetchFriends();
+  }, []);
 
   return (
     <View style={styles.wrapper}>
@@ -38,15 +61,34 @@ export default function friendsList({ returnHome }) {
             setName(text);
           }}
           style={styles.textinput}
-          placeholder="Enter user name"
+          placeholder="Enter User Email ..."
         />
-        <View>
-          <Button title="Add Friend" color="#d35400" />
-        </View>
+
+        <Button
+          title="Add Friend"
+          color="#d35400"
+          onPress={() => handleAddFriend()}
+        />
       </View>
+      {response ? (
+        <View
+          style={{
+            alignContent: "center",
+            justifyContent: "center",
+            flexDirection: "row",
+            marginTop: 20,
+          }}
+        >
+          <Text style={styles.confirmationText}>
+            You have added {friendName} succesfully
+          </Text>
+        </View>
+      ) : null}
+
       <View
         style={{
-          marginVertical: 30,
+          marginTop: 30,
+          flex: 1,
         }}
       >
         <Text
@@ -63,10 +105,9 @@ export default function friendsList({ returnHome }) {
           Your Friends
         </Text>
         <FlatList
+          contentContainerStyle={{ paddingBottom: 20 }}
           data={friends}
-          renderItem={({ item }) => (
-            <Friend name={item.name} number={item.key} />
-          )}
+          renderItem={({ item }) => <Friend name={item.name} />}
           style={{
             padding: 20,
             marginVertical: 10,
@@ -79,9 +120,6 @@ export default function friendsList({ returnHome }) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    // flexDirection: "row",
-    // marginTop: 50,
-    // justifyContent: "center",
     flex: 1,
   },
   textinput: {
@@ -89,8 +127,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: "#e67e22",
     paddingVertical: 2,
-    paddingHorizontal: 30,
+    paddingHorizontal: 40,
     marginRight: 20,
     color: "#d35400",
+  },
+  confirmationText: {
+    color: "#a80000",
+    fontFamily: "nunito-bold",
+    fontSize: 17,
   },
 });

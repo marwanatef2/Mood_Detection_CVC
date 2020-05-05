@@ -16,13 +16,13 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     paddingHorizontal: 40,
-    paddingVertical: 20,
-    borderWidth: 1,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
     borderRadius: 20,
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 10,
     borderColor: "#d35400",
   },
   textinput: {
@@ -31,5 +31,6 @@ const styles = StyleSheet.create({
     color: "#d35400",
     paddingRight: 180,
     fontFamily: "nunito-bold",
+    width: 250,
   },
 });

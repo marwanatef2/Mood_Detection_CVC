@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,7 @@ import {
 import Content from "./content";
 import Buttons from "./buttons";
 import FriendsList from "./friendsList";
+import axios from "axios";
 
 export default function Profile({ navigation }) {
   // navigation.popToTop();
@@ -19,6 +20,20 @@ export default function Profile({ navigation }) {
     name: navigation.getParam("name"),
     pic: navigation.getParam("picture"),
   });
+  const [notifications, setNotifications] = useState(null);
+  useEffect(() => {
+    async function fetchNotifications() {
+      axios
+        .post("https://marwanatef2.pythonanywhere.com/notifications", {
+          myemail: user.email,
+        })
+        .then((res) => {
+          setNotifications(res.data.notifications);
+        });
+    }
+
+    fetchNotifications();
+  }, []);
   const returnHome = () => {
     setUser(null);
     navigation.popToTop();
@@ -49,9 +64,13 @@ export default function Profile({ navigation }) {
           </TouchableOpacity>
           <View style={styles.content}>
             <Content name={user.name} pic={user.pic} />
-            <Buttons returnHome={returnHome} start={start} />
+            <Buttons
+              returnHome={returnHome}
+              start={start}
+              notifications={notifications}
+            />
           </View>
-          <FriendsList style={{}} />
+          <FriendsList style={{}} loggedEmail={user.email} />
         </View>
       </TouchableWithoutFeedback>
     );
