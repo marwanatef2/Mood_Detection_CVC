@@ -127,7 +127,7 @@ def followed_users():
     following = me.following
     users = []
     for followed in following:
-        users.append({'name': followed.name, 'email': followed.email})
+        users.append({'name': followed.name, 'email': followed.email, 'key': followed.id})
     sorted_users = sorted(users, key=itemgetter('name'))
     return {'users': sorted_users}
 
@@ -142,7 +142,7 @@ def followers():
     followers = me.followers
     users = []
     for follower in followers:
-        users.append({'name': follower.name, 'email': follower.email})
+        users.append({'name': follower.name, 'email': follower.email, 'key': follower.id})
     sorted_users = sorted(users, key=itemgetter('name'))
     return {'users': sorted_users}
 
@@ -156,7 +156,7 @@ def notifications():
     notifications = []
     for notification in my_notifications:
         notifications.append(
-            {'body': notification.body, 'datetime': notification.date_created.strftime('%d/%m %I:%M%p'), 'new': notification.date_created > me.last_checked})
+            {'body': notification.body, 'datetime': notification.date_created.strftime('%d/%m %I:%M%p'), 'new': notification.date_created > me.last_checked, 'key': notification.id})
     notifications.reverse()
     me.last_checked = datetime.now()
     db.session.commit()
@@ -174,9 +174,9 @@ def leaderboard():
     users = []
     for followed in following:
         users.append({'name': followed.name, 'email': followed.email,
-                      'image': followed.image, 'score': followed.score})
+                      'image': followed.image, 'score': followed.score, 'key': followed.id})
     users.append({'name': me.name, 'email': me.email,
-                  'image': me.image, 'score': me.score})
+                  'image': me.image, 'score': me.score, 'key': len(following)})
     sorted_users = sorted(users, key=itemgetter('score'), reverse=True)
     return {'users': sorted_users}
 
@@ -188,7 +188,7 @@ def global_scoreboard():
     users = []
     for user in db_users:
         users.append({'name': user.name, 'email': user.email,
-                      'image': user.image, 'score': user.score})
+                      'image': user.image, 'score': user.score, 'key': user.id})
     sorted_users = sorted(users, key=itemgetter('score'), reverse=True)
     return {'users': sorted_users}
 
