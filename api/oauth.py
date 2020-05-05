@@ -30,13 +30,13 @@ def google_logged_in(blueprint, token):
     user_info = resp.json()
     user_email = user_info["email"]
     user_name = user_info["name"]
-    
+    user_picture = user_info['picture']
 
-    query = User.query.filter_by(email=user_email, name=user_name)
+    query = User.query.filter_by(email=user_email)
     try:
         user = query.one()
     except NoResultFound:
-        user = User(email=user_email, name=user_name)
+        user = User(email=user_email, name=user_name, image=user_picture)
 
     db.session.add(user)
     db.session.commit()
