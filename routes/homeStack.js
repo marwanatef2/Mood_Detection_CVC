@@ -1,6 +1,6 @@
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
-import { createBottomTabNavigator } from "react-navigation-tabs";
+
 import Home from "../screens/home";
 import login from "../screens/login";
 import Profile from "../screens/profile/profile";
@@ -9,7 +9,7 @@ import Header from "../shared/header";
 import React from "react";
 const screens = {
   Home: {
-    screen: Camera,
+    screen: Home,
     navigationOptions: ({ navigation }) => {
       return {
         headerTitle: () => <Header navigation={navigation} title="TITO" />,
