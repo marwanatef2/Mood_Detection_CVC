@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
+import { AntDesign } from "@expo/vector-icons";
+export default function Friend({
+  name,
+  email,
+  addChallenger,
+  removeChallenger,
+}) {
+  const [chosen, setChosen] = useState(false);
 
-export default function Friend({ name }) {
+  const pressHandle = (email) => {
+    if (!chosen) {
+      addChallenger(email);
+      setChosen(true);
+    } else {
+      removeChallenger(email);
+      setChosen(false);
+    }
+  };
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.textinput}>{name}</Text>
+      <View>
+        <Text style={styles.textinput}>
+          {name}
+          {chosen && <AntDesign name="checkcircle" size={17} />}
+        </Text>
+      </View>
+
       <View style={{}}>
-        <Button title="challenge" color="#e67e22" />
+        <Button
+          title="challenge"
+          color="#e67e22"
+          onPress={() => {
+            pressHandle(email);
+          }}
+        />
       </View>
     </View>
   );
@@ -29,8 +57,8 @@ const styles = StyleSheet.create({
     borderColor: "#e67e22",
     fontSize: 18,
     color: "#d35400",
-    paddingRight: 180,
+    // paddingRight: 100,
     fontFamily: "nunito-bold",
-    width: 250,
+    width: 200,
   },
 });
