@@ -41,6 +41,24 @@ def logout():
 
 
 # @login_required
+@app.route('/search', methods=['POST'])
+def find_user():
+    data = request.get_json()
+    search_name = data['name']
+    search_format = '%{}%'.format(search_name)
+    found_users = User.query.filter(User.name.ilike(search_format)).all()
+    if not found_users:
+        return {'found': False}
+    else:
+        users = []
+        for user in found_users:
+            users.append({'key': user.id, 'name': user.name,
+                          'email': user.email, 'image': user.image})
+        sorted_users = sorted(users, key=itemgetter('name'))
+        return {'found': True, 'users': sorted_users}
+
+
+# @login_required
 @app.route('/follow', methods=['POST'])
 def follow_user():
     data = request.get_json()
