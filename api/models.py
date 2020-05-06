@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin
 from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
 from datetime import datetime
+from sqlalchemy.ext.associationproxy import association_proxy
 
 
 db = SQLAlchemy()
@@ -23,12 +24,16 @@ class User(UserMixin, db.Model):
     following = db.relationship('User', secondary=followers,
                                 primaryjoin=(followers.c.follower_id == id),
                                 secondaryjoin=(followers.c.followed_id == id),
-                                backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+                                backref=db.backref('followers', lazy='dynamic'),
+                                lazy='dynamic')
     notifications = db.relationship('Notification', backref='user', lazy=True)
     last_checked = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
+    # challenges_to = association_proxy('challenges_created', 'invited')
+    # challenges_from = association_proxy('challenges_invited', 'creator')
+
     def __repr__(self):
-        return '<User {}>'.format(self.email)
+        return '<User {}>'.format(self.name)
 
     def is_following(self, user):
         return self.following.filter(
@@ -54,6 +59,23 @@ class Notification(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     body = db.Column(db.Text, nullable=False)
     date_created = db.Column(db.DateTime, nullable=False)
+    challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'), nullable=True)
+    challenge = db.relationship('Challenge', lazy=True)
+
+
+class Challenge(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    invited_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    video_uri = db.Column(db.String(200), nullable=False, default='nothing for now')
+    date_created = db.Column(db.DateTime, nullable=False)
+    creator = db.relationship(User, primaryjoin=(
+        creator_id == User.id), backref='challenges_created')
+    invited = db.relationship(User, primaryjoin=(
+        invited_id == User.id), backref='challenges_invited')
+
+    def __repr__(self):
+        return '<Challenge from {} to {}>'.format(self.creator, self.invited)
 
 
 # setup login manager

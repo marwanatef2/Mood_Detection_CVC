@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request, jsonify
 from flask_login import login_required, logout_user, current_user
-from models import db, login_manager, User, Notification
+from models import db, login_manager, User, Notification, Challenge
 from oauth import blueprint
 # from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.contrib.google import make_google_blueprint, google
@@ -211,22 +211,69 @@ def global_scoreboard():
     return {'users': sorted_users}
 
 
+# @login_required
+@app.route('/challenge', methods=['POST'])
+def challenge_user():
+    data = request.get_json()
+    myemail = data['myemail']
+    email = data['email']
+    # video_uri = data['video_uri']
+    me = User.query.filter_by(email=myemail).first()
+    user = User.query.filter_by(email=email).first()
+    body = "{} has challenged you. Tap to accept!".format(me.name)
+    notification = Notification(body=body, user=user, date_created=datetime.now())
+    # if user is not None and user != current_user:
+    if user is not None and user != me:
+        # current_user.follow(user)
+        challenge = Challenge(creator=me, invited=user, date_created=datetime.now())
+        notification.challenge = challenge
+        db.session.add_all([notification, challenge])
+        db.session.commit()
+        return {'challenged': True}
+    return {'challenged': False}
+
+
+@app.route('/acceptchallenge', methods=['POST'])
+def accept_challenge():
+    data = request.get_json()
+    key = int(data['key'])
+    notification = Notification.query.get(key)
+    acceptor = notification.user
+    challenge = notification.challenge
+    creator = challenge.creator
+    body = "{} has accepted your challenge.".format(acceptor.name)
+    send_notification = Notification(body=body, user=creator, date_created=datetime.now())
+    db.session.add(send_notification)
+    db.session.commit()
+    return {'creator': creator.name, 'video_uri': challenge.video_uri}
+
+
 @app.route('/db')
 def database():
     db.drop_all()
     db.create_all()
-    # marwan = User.query.get(1)
-    # body = 'khara test notification'
-    # notification = Notification(body=body, user=marwan)
-    mido = User(name='mido', email='mido@rdq.com', score=5)
-    zeez = User(name='zeez', email='zeez@rdq.com', score=100)
-    samir = User(name='samir', email='samir@rdq.com', score=5)
-    ziad = User(name='ziad', email='ziad@rdq.com', score=4)
-    marwan = User(name='marwan', email='marwan@rdq.com', score=10)
-    db.session.add_all([marwan, ziad, mido, zeez, samir])
-    db.session.commit()
-
+    # mido = User(name='mido', email='mido@rdq.com', score=5)
+    # zeez = User(name='zeez', email='zeez@rdq.com', score=100)
+    # samir = User(name='samir', email='samir@rdq.com', score=5)
+    # ziad = User(name='ziad', email='ziad@rdq.com', score=4)
+    # marwan = User(name='marwan', email='marwan@rdq.com', score=10)
+    # challenge1 = Challenge(creator=mido, invited=zeez)
+    # challenge2 = Challenge(creator=mido, invited=samir)
+    # challenge3 = Challenge(creator=marwan, invited=mido)
+    # challenge4 = Challenge(creator=mido, invited=zeez)
+    # db.session.add_all([marwan, ziad, mido, zeez, samir])
+    # db.session.add_all([challenge4, challenge3, challenge2, challenge1])
+    # db.session.commit()
     return "successful"
+
+    # mido = User.query.filter_by(name='mido').first()
+    # challenges = mido.challenges_invited
+    # challenges = mido.challenges_created
+    # challenges = Challenge.query.all()
+    # my = list()
+    # for khara in challenges:
+    #     my.append(str(khara))
+    # return {'challenges': my}
 
 
 @app.route('/video', methods=['POST'])
