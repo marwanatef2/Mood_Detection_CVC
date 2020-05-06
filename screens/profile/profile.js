@@ -7,6 +7,8 @@ import {
   ImageBackground,
   TouchableOpacity,
   Keyboard,
+  ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import Content from "./content";
 import Buttons from "./buttons";
@@ -21,6 +23,7 @@ export default function Profile({ navigation }) {
     pic: navigation.getParam("picture"),
   });
   const [notifications, setNotifications] = useState(null);
+  const [loaded, setLoaded] = useState(false);
   useEffect(() => {
     async function fetchNotifications() {
       axios
@@ -29,6 +32,7 @@ export default function Profile({ navigation }) {
         })
         .then((res) => {
           setNotifications(res.data.notifications);
+          setLoaded(true);
         });
     }
 
@@ -40,11 +44,13 @@ export default function Profile({ navigation }) {
   };
 
   const start = () => {
-    navigation.navigate("Camera");
+    navigation.navigate("StartChallenge", {
+      email: user.email,
+    });
   };
-  if (user != null)
+  if (loaded)
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ScrollView onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>
           <TouchableOpacity onPress={returnHome}>
             <ImageBackground
@@ -72,9 +78,21 @@ export default function Profile({ navigation }) {
           </View>
           <FriendsList style={{}} loggedEmail={user.email} />
         </View>
-      </TouchableWithoutFeedback>
+      </ScrollView>
     );
-  else return <Text>zeez</Text>;
+  else
+    return (
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "row",
+          alignContent: "center",
+          justifyContent: "center",
+        }}
+      >
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
 }
 
 const styles = StyleSheet.create({

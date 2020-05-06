@@ -7,6 +7,8 @@ import Profile from "../screens/profile/profile";
 import Camera from "../screens/camera/camera";
 import Header from "../shared/header";
 import React from "react";
+import ProfileStack from "./profileStack";
+import StartChallenge from "../screens/profile/startChallenge";
 const screens = {
   Home: {
     screen: Home,
@@ -30,6 +32,16 @@ const screens = {
     navigationOptions: ({ navigation }) => {
       return {
         headerTitle: () => <Header navigation={navigation} title="Profile" />,
+      };
+    },
+  },
+  StartChallenge: {
+    screen: StartChallenge,
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: () => (
+          <Header navigation={navigation} title="Select Friends" />
+        ),
       };
     },
   },
