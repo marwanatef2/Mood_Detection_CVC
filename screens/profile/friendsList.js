@@ -29,20 +29,36 @@ export default function friendsList({ returnHome, loggedEmail }) {
       })
       .then((res) => {
         setResponse(res.data.added);
+        setLoaded(false);
+        fetchFriends();
       });
   };
+
+  const handleDeleteFriend = async (mail) => {
+    axios
+      .post("https://marwanatef2.pythonanywhere.com/remove", {
+        myemail: loggedEmail,
+        email: mail,
+      })
+      .then((res) => {
+        setLoaded(false);
+        setResponse(false);
+        fetchFriends();
+      });
+  };
+  async function fetchFriends() {
+    axios
+      .post("https://marwanatef2.pythonanywhere.com/friends", {
+        myemail: loggedEmail,
+      })
+      .then((res) => {
+        // console.log(res.data.users);
+        setFriends(res.data.users);
+        setLoaded(true);
+      });
+  }
   useEffect(() => {
     // console.log("Logged user", loggedEmail);
-    async function fetchFriends() {
-      axios
-        .post("https://marwanatef2.pythonanywhere.com/friends", {
-          myemail: loggedEmail,
-        })
-        .then((res) => {
-          setFriends(res.data.users);
-          setLoaded(true);
-        });
-    }
 
     fetchFriends();
   }, []);
@@ -107,7 +123,14 @@ export default function friendsList({ returnHome, loggedEmail }) {
           <FlatList
             contentContainerStyle={{ paddingBottom: 20 }}
             data={friends}
-            renderItem={({ item }) => <Friend name={item.name} />}
+            renderItem={({ item }) => (
+              <Friend
+                name={item.name}
+                page="friend"
+                deleteFriend={handleDeleteFriend}
+                email={item.email}
+              />
+            )}
             style={{
               padding: 20,
               marginVertical: 10,

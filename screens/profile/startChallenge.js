@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   FlatList,
   Button,
+  ImageBackground,
 } from "react-native";
 import axios from "axios";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -27,6 +28,17 @@ export default function StartChallenge({ start, navigation }) {
     challengers = b;
     // console.log(challengers);
   };
+  const handleNext = () => {
+    // navigation.navigate("SelectChallenge", challengers);
+    axios
+      .post("https://marwanatef2.pythonanywhere.com/challenge", {
+        myemail: loggedEmail,
+        emails: challengers,
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
+  };
 
   useEffect(() => {
     // console.log("Logged user", loggedEmail);
@@ -36,6 +48,7 @@ export default function StartChallenge({ start, navigation }) {
           myemail: loggedEmail,
         })
         .then((res) => {
+          // console.log(res.data.users);
           setFriends(res.data.users);
           setLoaded(true);
         });
@@ -45,7 +58,7 @@ export default function StartChallenge({ start, navigation }) {
   }, []);
 
   return (
-    <View>
+    <View style={{ flex: 1, backgroundColor: "#ddd" }}>
       <Text
         style={{
           paddingHorizontal: 40,
@@ -67,7 +80,7 @@ export default function StartChallenge({ start, navigation }) {
       >
         <Text
           style={{
-            color: "#e67e22",
+            color: "#576574",
             fontSize: 18,
             fontFamily: "nunito-regular",
           }}
@@ -83,6 +96,7 @@ export default function StartChallenge({ start, navigation }) {
               email={item.email}
               addChallenger={addChallenger}
               removeChallenger={removeChallenger}
+              page={"start"}
             />
           )}
           style={{
@@ -90,7 +104,7 @@ export default function StartChallenge({ start, navigation }) {
             marginVertical: 10,
           }}
         />
-        <Button title="next" color="#e67e22" />
+        <Button title="next" color="#e67e22" onPress={handleNext} />
       </View>
     </View>
   );

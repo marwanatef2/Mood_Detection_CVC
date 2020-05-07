@@ -8,6 +8,7 @@ import Camera from "../screens/camera/camera";
 import Header from "../shared/header";
 import React from "react";
 import ProfileStack from "./profileStack";
+import SelectChallege from "../screens/profile/selectChallenge";
 import StartChallenge from "../screens/profile/startChallenge";
 const screens = {
   Home: {
@@ -45,6 +46,16 @@ const screens = {
       };
     },
   },
+  SelectChallenge: {
+    screen: SelectChallege,
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: () => (
+          <Header navigation={navigation} title="Select Video" />
+        ),
+      };
+    },
+  },
   Camera: {
     screen: Camera,
     navigationOptions: ({ navigation }) => {
@@ -61,6 +72,16 @@ const HomeStack = createStackNavigator(screens, {
     headerStyle: {
       backgroundColor: "#ddd",
       height: 100,
+    },
+    headerTitleAlign: "center",
+    headerBackAllowFontScaling: true,
+    headerBackTitleVisible: false,
+    headerPressColorAndroid: "#d35400",
+    headerTitleContainerStyle: {
+      flex: 1,
+
+      alignContent: "center",
+      justifyContent: "center",
     },
   },
 });

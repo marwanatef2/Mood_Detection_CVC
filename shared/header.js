@@ -7,12 +7,11 @@ export default function Header({ navigation, title }) {
     navigation.openDrawer();
   };
   return (
-    <View style={styles.container}>
-      <View
-        style={
-          title === "TITO" ? styles.header : { ...styles.header, left: "30%" }
-        }
-      >
+    <ImageBackground
+      source={require("../assets/game_bg.png")}
+      style={styles.container}
+    >
+      <View style={styles.header}>
         {/* <MaterialIcons
         name="menu"
         size={28}
@@ -27,7 +26,7 @@ export default function Header({ navigation, title }) {
           <Text style={styles.headerText}>{title}</Text>
         </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 }
 

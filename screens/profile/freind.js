@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 export default function Friend({
   name,
   email,
   addChallenger,
   removeChallenger,
+  page,
+  deleteFriend,
 }) {
   const [chosen, setChosen] = useState(false);
 
@@ -22,19 +25,28 @@ export default function Friend({
     <View style={styles.wrapper}>
       <View>
         <Text style={styles.textinput}>
-          {name}
-          {chosen && <AntDesign name="checkcircle" size={17} />}
+          {`${name}  `}
+          {chosen && <AntDesign name="checkcircle" size={17} color="#10ac84" />}
         </Text>
       </View>
 
       <View style={{}}>
-        <Button
-          title="challenge"
-          color="#e67e22"
-          onPress={() => {
-            pressHandle(email);
-          }}
-        />
+        {page === "start" ? (
+          <Button
+            title="challenge"
+            color="#e67e22"
+            onPress={() => {
+              if (pressHandle) pressHandle(email);
+            }}
+          />
+        ) : (
+          <Entypo
+            name="remove-user"
+            size={25}
+            color="#147cd6"
+            onPress={() => deleteFriend(email)}
+          />
+        )}
       </View>
     </View>
   );
