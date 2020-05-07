@@ -216,21 +216,18 @@ def global_scoreboard():
 def challenge_user():
     data = request.get_json()
     myemail = data['myemail']
-    email = data['email']
+    emails = data['emails']
     # video_uri = data['video_uri']
     me = User.query.filter_by(email=myemail).first()
-    user = User.query.filter_by(email=email).first()
     body = "{} has challenged you. Tap to accept!".format(me.name)
-    notification = Notification(body=body, user=user, date_created=datetime.now())
-    # if user is not None and user != current_user:
-    if user is not None and user != me:
-        # current_user.follow(user)
+    for email in emails:
+        user = User.query.filter_by(email=email).first()
+        notification = Notification(body=body, user=user, date_created=datetime.now())
         challenge = Challenge(creator=me, invited=user, date_created=datetime.now())
         notification.challenge = challenge
         db.session.add_all([notification, challenge])
-        db.session.commit()
-        return {'challenged': True}
-    return {'challenged': False}
+    db.session.commit()
+    return {'challenged': True}
 
 
 @app.route('/acceptchallenge', methods=['POST'])
@@ -250,20 +247,20 @@ def accept_challenge():
 
 @app.route('/db')
 def database():
-    db.drop_all()
-    db.create_all()
-    # mido = User(name='mido', email='mido@rdq.com', score=5)
-    # zeez = User(name='zeez', email='zeez@rdq.com', score=100)
-    # samir = User(name='samir', email='samir@rdq.com', score=5)
-    # ziad = User(name='ziad', email='ziad@rdq.com', score=4)
-    # marwan = User(name='marwan', email='marwan@rdq.com', score=10)
+    # db.drop_all()
+    # db.create_all()
+    mido = User(name='mido', email='mido@rdq.com', score=5)
+    zeez = User(name='zeez', email='zeez@rdq.com', score=100)
+    samir = User(name='samir', email='samir@rdq.com', score=5)
+    ziad = User(name='ziad', email='ziad@rdq.com', score=4)
+    marwan = User(name='marwan', email='marwan@rdq.com', score=10)
     # challenge1 = Challenge(creator=mido, invited=zeez)
     # challenge2 = Challenge(creator=mido, invited=samir)
     # challenge3 = Challenge(creator=marwan, invited=mido)
     # challenge4 = Challenge(creator=mido, invited=zeez)
-    # db.session.add_all([marwan, ziad, mido, zeez, samir])
+    db.session.add_all([marwan, ziad, mido, zeez, samir])
     # db.session.add_all([challenge4, challenge3, challenge2, challenge1])
-    # db.session.commit()
+    db.session.commit()
     return "successful"
 
     # mido = User.query.filter_by(name='mido').first()
