@@ -1,8 +1,9 @@
 from smile import calc_video_score
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-score, avg = calc_video_score('test.avi')
-print("final score: ", score, "avg mar: ", avg)
+
+score = calc_video_score('test.avi', 10, 50)
+print("final score: ", score)
 
 
 # import numpy as np
