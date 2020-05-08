@@ -7,6 +7,8 @@ from flask_dance.contrib.google import make_google_blueprint, google
 import urllib.request
 from operator import itemgetter
 from datetime import datetime
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 db.init_app(app)
@@ -247,8 +249,8 @@ def accept_challenge():
 
 @app.route('/db')
 def database():
-    # db.drop_all()
-    # db.create_all()
+    db.drop_all()
+    db.create_all()
     mido = User(name='mido', email='mido@rdq.com', score=5)
     zeez = User(name='zeez', email='zeez@rdq.com', score=100)
     samir = User(name='samir', email='samir@rdq.com', score=5)
@@ -273,20 +275,23 @@ def database():
     # return {'challenges': my}
 
 
-@app.route('/video', methods=['POST'])
+@app.route('/image', methods=['POST'])
 def video():
-    # from video_processing.smile import calc_video_score
-    from werkzeug.utils import secure_filename
-    import os
-    # video = request.files['videoFile']
-    if 'video' not in request.files:
-        return {'zeez': 'not found'}
+    from video_processing.smile import calc_video_score
 
-    video = request.files['video']
+    if 'image' not in request.files:
+        return {'image': 'not found'}
 
-    video_name = secure_filename(video.filename)
-    video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
-    return "successful"
+    image = request.files['image']
+
+    vertical_dist, horizontal_dist = calc_video_score(image, video=False)
+
+    return {'vertical_dist': vertical_dist, 'horizontal_dist': horizontal_dist}
+
+    # video_name = secure_filename(video.filename)
+    # video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
+
+    # return "successful"
     # score = calc_video_score(uri)
     # return {'score': score}
 
