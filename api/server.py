@@ -277,15 +277,20 @@ def database():
 
 @app.route('/image', methods=['POST'])
 def video():
+    
     from video_processing.smile import calc_video_score
-
+    
     if 'image' not in request.files:
         return {'image': 'not found'}
 
     image = request.files['image']
-
-    vertical_dist, horizontal_dist = calc_video_score(image, video=False)
-
+    image_name = secure_filename(image.filename)
+    image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
+   
+    # print('C:\\Users\\zeezl\\Desktop\\project Image\\Mood_Detection_CVC\\api\\uploded\\'+image_name)
+   
+    vertical_dist, horizontal_dist = calc_video_score('C:\\Users\\zeezl\\Desktop\\project Image\\Mood_Detection_CVC\\api\\uploded\\'+image_name, video=False)
+   
     return {'vertical_dist': vertical_dist, 'horizontal_dist': horizontal_dist}
 
     # video_name = secure_filename(video.filename)

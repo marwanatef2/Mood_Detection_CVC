@@ -55,7 +55,7 @@ def calc_video_score(video_path=None, stored_vert=None, stored_hori=None, video=
     #                 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
 
     # detecting "mouth" on "face"
-    shape_predictor = "shape_predictor_68_face_landmarks.dat"
+    shape_predictor = "C:\\Users\\zeezl\Desktop\\project Image\\Mood_Detection_CVC\\api\\video_processing\\shape_predictor_68_face_landmarks.dat"
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(shape_predictor)
     (mStart, mEnd) = face_utils.FACIAL_LANDMARKS_IDXS["mouth"]
@@ -129,6 +129,7 @@ def calc_video_score(video_path=None, stored_vert=None, stored_hori=None, video=
         return points
 
     else:
+      
         image = cv2.imread(video_path)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
