@@ -1,3 +1,5 @@
+// this is the view that contains the start challenge button , scoreboard button and the notifications button
+
 import React, { useState } from "react";
 import {
   StyleSheet,
@@ -11,6 +13,8 @@ import Modall from "./notificationsModal";
 
 export default function Buttons({ start, notifications, email }) {
   const [modalOpen, setModalOpen] = useState(false);
+
+  // check if there is new notifications
   let count = 0;
   if (notifications) {
     notifications.forEach((item) => {
@@ -18,6 +22,7 @@ export default function Buttons({ start, notifications, email }) {
     });
   }
 
+  // Function to be fired when the user press the X sign to close the notifications modal
   const closeModal = () => {
     setModalOpen(false);
   };

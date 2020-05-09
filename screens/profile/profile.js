@@ -1,9 +1,10 @@
+// this is the profile screen that renders the user image and friends and also contains the button screen and content screen
+
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  TouchableWithoutFeedback,
   ImageBackground,
   TouchableOpacity,
   Keyboard,
@@ -14,16 +15,21 @@ import Content from "./content";
 import Buttons from "./buttons";
 import FriendsList from "./friendsList";
 import axios from "axios";
+import StartChallenge from "./selectChallenge";
 
 export default function Profile({ navigation }) {
-  // navigation.popToTop();
+  // retrieve the user that is sent as a param from login screen
   const [user, setUser] = useState({
     email: navigation.getParam("email"),
     name: navigation.getParam("name"),
     pic: navigation.getParam("picture"),
   });
+
   const [notifications, setNotifications] = useState(null);
   const [loaded, setLoaded] = useState(false);
+
+  // fetch the notifications by requesting /notifications and giving it the logged user email as a data
+  // returning object notifications
   useEffect(() => {
     async function fetchNotifications() {
       axios
@@ -38,11 +44,14 @@ export default function Profile({ navigation }) {
 
     fetchNotifications();
   }, []);
+
+  // logout function
   const returnHome = () => {
     setUser(null);
     navigation.popToTop();
   };
 
+  // navigate to StartChallenge screen when user press StartChallenge button
   const start = () => {
     navigation.navigate("StartChallenge", {
       email: user.email,

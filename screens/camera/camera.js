@@ -1,3 +1,5 @@
+// screen responsible to show the user video and the camera to record himself while watching the challenge video , by requiring the cameraBody screen but first it had to check if the user has already adjusted his face values , if not it first tells the user to capture him self in a neutral mode and send the picture to the server to take the face values and store it in the database so we can get a much accurate score
+
 import React, { useState } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import Cbody from "./cameraBody";
@@ -9,6 +11,8 @@ import axios from "axios";
 export default function caamera({ firstLogin }) {
   const [tookPhoto, setTookPhoto] = useState(false);
   const [cameraRef, setCameraRef] = useState(null);
+
+  // this function is responsible to send the captured photo to the server to get the face values
   const takePicture = async () => {
     let url = "http://192.168.1.110:5000/image";
     console.log("zeez");

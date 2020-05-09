@@ -7,10 +7,13 @@ import Profile from "../screens/profile/profile";
 import Camera from "../screens/camera/camera";
 import Header from "../shared/header";
 import React from "react";
-import ProfileStack from "./profileStack";
+
 import SelectChallege from "../screens/profile/selectChallenge";
 import StartChallenge from "../screens/profile/startChallenge";
-import Animation from "../screens/animation";
+import App from "../screens/camera/draggable";
+
+// Intializing the screens first and give it the screen component and its options
+
 const screens = {
   Home: {
     screen: SelectChallege,
@@ -66,6 +69,8 @@ const screens = {
     },
   },
 };
+
+// Create the Main stack for the application so we can navigate throught pages and then export it to App.js so we can use it
 
 const HomeStack = createStackNavigator(screens, {
   defaultNavigationOptions: {

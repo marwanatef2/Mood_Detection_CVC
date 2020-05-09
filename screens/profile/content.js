@@ -1,7 +1,10 @@
+// this is the view that will show the cover image and the user profile image
+
 import React from "react";
 import { StyleSheet, Text, View, Button, TextInput, Image } from "react-native";
 
 export default function Content({ name, pic }) {
+  // get the user name and make each first letter from his name in capital
   const upper = name.replace(/^\w/, (c) => c.toUpperCase());
 
   return (

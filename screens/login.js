@@ -12,17 +12,25 @@ import {
 } from "react-native";
 
 export default function home({ navigation }) {
+  // this function handle signup process as it goes to our server route that is responsible for the login logic
   const handleSignUp = () => {
     WebBrowser.openBrowserAsync("https://marwanatef2.pythonanywhere.com/login");
   };
+
+  // Add event listener to linking object so we can know when the user has already finished loggin in and then retrive his data and redirect him to the profile page containg his info
+
   Linking.addEventListener("url", (url) => {
+    // parsing the url that is returned from the server containg the user's info
     let { path, queryParams } = Linking.parse(url.url);
+
+    // creating user object with his info
     let loggedUser = {
       name: queryParams["name"],
       email: queryParams["email"],
       picture: queryParams["pic"],
     };
 
+    // Navigating to the profile screen and adding to it a param to retrieve that contains the user info
     navigation.navigate("Profile", loggedUser);
   });
 

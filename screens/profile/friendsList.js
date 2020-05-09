@@ -1,3 +1,5 @@
+// view that show the add friend and the friend list in the profile page
+
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -16,11 +18,14 @@ export default function friendsList({ returnHome, loggedEmail }) {
   const [friendName, setFriendName] = useState("");
   const [response, setResponse] = useState(false);
   const [friends, setFriends] = useState([]);
+
+  // function to set the name of the friend that the user has entered his email
   const setName = (name) => {
     setFriendName(name);
     // console.log(friendName);
   };
 
+  // function fired when the user press the add friend button , it send request to the /addfriend route  with logged user email and the friend email as data to the server
   const handleAddFriend = async () => {
     axios
       .post("https://marwanatef2.pythonanywhere.com/addfriend", {
@@ -34,6 +39,7 @@ export default function friendsList({ returnHome, loggedEmail }) {
       });
   };
 
+  // function fired when user press the delete icon to delete the friend , it goes to /remove with logged user email and the email of the deleted friend
   const handleDeleteFriend = async (mail) => {
     axios
       .post("https://marwanatef2.pythonanywhere.com/remove", {
@@ -46,6 +52,8 @@ export default function friendsList({ returnHome, loggedEmail }) {
         fetchFriends();
       });
   };
+
+  // function to fetch the logged user friends to show it in the list by requesting /friends from the server and returning friends object and save it to the state so we can use it later in different screens
   async function fetchFriends() {
     axios
       .post("https://marwanatef2.pythonanywhere.com/friends", {
@@ -57,11 +65,12 @@ export default function friendsList({ returnHome, loggedEmail }) {
         setLoaded(true);
       });
   }
-  useEffect(() => {
-    // console.log("Logged user", loggedEmail);
 
+  // use effect function is a hook supplied by react that launches when the screen is loaded automatically
+  useEffect(() => {
     fetchFriends();
   }, []);
+
   if (loaded)
     return (
       <View style={styles.wrapper}>

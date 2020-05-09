@@ -34,6 +34,7 @@ export default function Cbody() {
       // setPhoto(uri);
     }
   };
+
   const detectFaces = async (imageUri) => {
     const options = {
       mode: FaceDetector.Constants.Mode.fast,
@@ -42,6 +43,8 @@ export default function Cbody() {
     };
     return await FaceDetector.detectFacesAsync(imageUri, options);
   };
+
+  // function responsible to record the video and send it after the challenge video is over to get the score
   const takeVideo = async () => {
     if (cameraRef) {
       let url = "http://192.168.1.110:5000/video";
@@ -102,6 +105,8 @@ export default function Cbody() {
   const handleFacesDetected = (obj) => {
     console.log(obj);
   };
+
+  // function to know if the challenged video is started so we can start recording
   const onUpdate = (ps) => {
     if (ps.didJustFinish && !ps.isLooping) {
       // The player has just finished playing and will stop. Maybe you want to play something else?

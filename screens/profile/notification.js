@@ -1,3 +1,5 @@
+// screen responsible for showing Notification data it gets the body and date and whether it is new or old Notification
+
 import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";

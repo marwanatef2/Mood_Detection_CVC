@@ -5,6 +5,7 @@ import * as Font from "expo-font";
 import { Linking, AppLoading } from "expo";
 import Navigator from "./routes/homeStack";
 
+// this function is used to load our custom fonts so it can be used later when styling
 const getFonts = () =>
   Font.loadAsync({
     "nunito-regular": require("./assets/fonts/Nunito-Regular.ttf"),
@@ -15,28 +16,7 @@ export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [username, setUsername] = useState("");
 
-  const getUserInfo = () => {
-    Linking.openURL("https://marwanatef2.pythonanywhere.com/login");
-    //
-    // axios.get("https://marwanatef2.pythonanywhere.com/login").then((res) => {
-    //   console.log(res.data);
-    //   console.log("zeez");
-    // });
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    // console.log("zee3ez");
-    // fetch("http://10.0.2.2:5000/zeez", {
-    //   method: "GET",
-    //   //Request Type
-    // }).then((response) => console.log("zeez"));
-    //If response is in json then in success
-  };
-  const onChangeText = (text) => {
-    setUsername(text);
-    console.log(username);
-  };
-
+  // here we call the function to load the fonts until then we will show an apploading screen after the fonts is loaded it will go to our Navigator which contains all of our screens
   if (fontsLoaded) {
     return <Navigator />;
   } else {

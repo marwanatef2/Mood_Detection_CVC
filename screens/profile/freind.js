@@ -1,3 +1,5 @@
+// this is the view that render the info of the friend it takes page as a prop to know in which screen it is and to render the suitable data
+
 import React, { useState } from "react";
 import { StyleSheet, Text, View, Button, Animated } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
@@ -12,6 +14,8 @@ export default function Friend({
 }) {
   const [chosen, setChosen] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0];
+
+  // function to animate the selected friend for challenge and add it to the challengers array
   const pressHandle = (email) => {
     if (!chosen) {
       Animated.timing(fadeAnim, {
