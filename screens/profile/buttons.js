@@ -9,7 +9,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import Modall from "./notificationsModal";
 
-export default function Buttons({ start, notifications }) {
+export default function Buttons({ start, notifications, email }) {
   const [modalOpen, setModalOpen] = useState(false);
   let count = 0;
   if (notifications) {

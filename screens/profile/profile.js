@@ -74,6 +74,7 @@ export default function Profile({ navigation }) {
               returnHome={returnHome}
               start={start}
               notifications={notifications}
+              email={user.email}
             />
           </View>
           <FriendsList style={{}} loggedEmail={user.email} />

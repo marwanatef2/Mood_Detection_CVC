@@ -123,6 +123,7 @@ export default function friendsList({ returnHome, loggedEmail }) {
           <FlatList
             contentContainerStyle={{ paddingBottom: 20 }}
             data={friends}
+            keyExtractor={(item) => item.email}
             renderItem={({ item }) => (
               <Friend
                 name={item.name}

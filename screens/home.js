@@ -1,28 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import {
   StyleSheet,
   Text,
   View,
+  Button,
   TouchableOpacity,
   ImageBackground,
 } from "react-native";
-import * as Permissions from "expo-permissions";
 
-export default function home({ route, navigation }) {
-  const [hasPermission, setHasPermission] = useState(null);
-
-  useEffect(() => {
-    (async () => {
-      const { status } = await Permissions.getAsync(
-        Permissions.CAMERA,
-        Permissions.CAMERA_ROLL
-      );
-      setHasPermission(status === "granted");
-    })();
-  }, []);
-
+export default function home({ navigation }) {
   return (
     <ImageBackground
       source={require("../assets/backg.jpg")}
@@ -30,14 +18,7 @@ export default function home({ route, navigation }) {
     >
       <View style={styles.titlePage}>
         <View style={styles.iconHolder}>
-          <Text
-            style={{
-              fontSize: 45,
-              color: "#fff",
-              marginRight: 15,
-              fontFamily: "nunito-bold",
-            }}
-          >
+          <Text style={{ fontSize: 45, color: "#fff", marginRight: 15 }}>
             Mood Detector
           </Text>
           <Ionicons name="md-sad" size={45} style={styles.icon} />
@@ -49,14 +30,7 @@ export default function home({ route, navigation }) {
           <Ionicons name="md-happy" size={45} style={styles.icon} />
         </View>
 
-        <Text
-          style={{
-            fontSize: 13,
-            fontWeight: "100",
-            color: "#ddd",
-            fontFamily: "nunito-regular",
-          }}
-        >
+        <Text style={{ fontSize: 13, fontWeight: "100", color: "#ddd" }}>
           By Team : TITO
         </Text>
       </View>
@@ -67,7 +41,6 @@ export default function home({ route, navigation }) {
             alignSelf: "center",
             fontSize: 20,
             color: "#fff",
-            fontFamily: "nunito-regular",
           }}
         >
           Login:{" "}

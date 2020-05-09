@@ -8,6 +8,7 @@ import {
   FlatList,
   Button,
   ImageBackground,
+  Animated,
 } from "react-native";
 import axios from "axios";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -29,15 +30,15 @@ export default function StartChallenge({ start, navigation }) {
     // console.log(challengers);
   };
   const handleNext = () => {
-    // navigation.navigate("SelectChallenge", challengers);
-    axios
-      .post("https://marwanatef2.pythonanywhere.com/challenge", {
-        myemail: loggedEmail,
-        emails: challengers,
-      })
-      .then((res) => {
-        console.log(res.data);
-      });
+    navigation.navigate("SelectChallenge", challengers);
+    // axios
+    //   .post("https://marwanatef2.pythonanywhere.com/challenge", {
+    //     myemail: loggedEmail,
+    //     emails: challengers,
+    //   })
+    //   .then((res) => {
+    //     console.log(res.data);
+    //   });
   };
 
   useEffect(() => {

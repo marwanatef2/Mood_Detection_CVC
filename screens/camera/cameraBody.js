@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   Text,
   View,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import Drag from "./draggable";
 import * as FaceDetector from "expo-face-detector";
 import * as MediaLibrary from "expo-media-library";
 
@@ -21,6 +22,7 @@ export default function Cbody() {
   const [cameraRef, setCameraRef] = useState(null);
   const [videoRef, setVideoRef] = useState(null);
   const [loaaaad, setLoad] = useState(true);
+
   const takePicture = async () => {
     if (cameraRef) {
       const { uri } = await cameraRef.takePictureAsync();
@@ -28,10 +30,18 @@ export default function Cbody() {
       // const uri = await CameraRoll.saveToCameraRoll(uri);
       // console.log(uri);
       // console.log("captured");
-      setPhoto(uri);
+      console.log(await detectFaces(uri));
+      // setPhoto(uri);
     }
   };
-
+  const detectFaces = async (imageUri) => {
+    const options = {
+      mode: FaceDetector.Constants.Mode.fast,
+      detectLandmarks: FaceDetector.Constants.Landmarks.all,
+      runClassifications: FaceDetector.Constants.Classifications.all,
+    };
+    return await FaceDetector.detectFacesAsync(imageUri, options);
+  };
   const takeVideo = async () => {
     if (cameraRef) {
       let url = "http://192.168.1.110:5000/video";
@@ -101,7 +111,7 @@ export default function Cbody() {
   // if (load)
   return (
     <View style={{ flex: 1, ...styles.wrapper }}>
-      <View style={styles.container}>
+      <Drag styles={styles.container}>
         <Camera
           style={styles.cameraBody}
           type={type}
@@ -120,21 +130,21 @@ export default function Cbody() {
           //   tracking: true,
           // }}
         />
-      </View>
+      </Drag>
 
-      <View style={{ flex: 1 }}>
+      <TouchableOpacity style={{ flex: 1 }}>
         <Video
           ref={handelVideoRef}
           source={require("../../assets/videos/blog.mp4")}
           shouldPlay
           resizeMode="contain"
           style={{ width, height: "100%" }}
-          onLoadStart={() => takeVideo()}
+          // onLoadStart={() => takeVideo()}
           useNativeControls={true}
           onPlaybackStatusUpdate={(ps) => onUpdate(ps)}
           volume={0}
         />
-      </View>
+      </TouchableOpacity>
     </View>
   );
   // else
@@ -154,19 +164,19 @@ export default function Cbody() {
 
 const styles = StyleSheet.create({
   wrapper: {
-    backgroundColor: "#aaa",
+    backgroundColor: "#222",
   },
   container: {
-    borderRadius: 300,
+    borderRadius: 100,
     overflow: "hidden",
-    height: 100,
-    width: 100,
-    borderWidth: 2,
-    borderColor: "black",
+    height: 160,
+    width: 160,
+    borderWidth: 30,
+    borderColor: "#000",
     position: "absolute",
-    top: 0,
     right: 0,
     zIndex: 1,
+    backgroundColor: "red",
   },
   cameraBody: {
     flex: 1,

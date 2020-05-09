@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, Animated } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 export default function Friend({
@@ -11,18 +11,36 @@ export default function Friend({
   deleteFriend,
 }) {
   const [chosen, setChosen] = useState(false);
-
+  const fadeAnim = useState(new Animated.Value(0))[0];
   const pressHandle = (email) => {
     if (!chosen) {
+      Animated.timing(fadeAnim, {
+        toValue: 300,
+        duration: 800,
+      }).start();
       addChallenger(email);
       setChosen(true);
     } else {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500,
+      }).start();
       removeChallenger(email);
       setChosen(false);
     }
   };
   return (
-    <View style={styles.wrapper}>
+    <Animated.View
+      style={[
+        styles.wrapper,
+        {
+          backgroundColor: fadeAnim.interpolate({
+            inputRange: [0, 255],
+            outputRange: ["#eee", "#444"],
+          }),
+        },
+      ]}
+    >
       <View>
         <Text style={styles.textinput}>
           {`${name}  `}
@@ -48,7 +66,7 @@ export default function Friend({
           />
         )}
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -57,7 +75,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 40,
     paddingVertical: 10,
-    borderBottomWidth: 1,
     borderRadius: 20,
     flexDirection: "row",
     justifyContent: "flex-start",

@@ -10,9 +10,10 @@ import React from "react";
 import ProfileStack from "./profileStack";
 import SelectChallege from "../screens/profile/selectChallenge";
 import StartChallenge from "../screens/profile/startChallenge";
+import Animation from "../screens/animation";
 const screens = {
   Home: {
-    screen: Home,
+    screen: SelectChallege,
     navigationOptions: ({ navigation }) => {
       return {
         headerTitle: () => <Header navigation={navigation} title="TITO" />,
