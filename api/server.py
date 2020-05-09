@@ -254,44 +254,44 @@ def database():
     mido = User(name='mido', email='mido@rdq.com', score=5)
     zeez = User(name='zeez', email='zeez@rdq.com', score=100)
     samir = User(name='samir', email='samir@rdq.com', score=5)
-    ziad = User(name='ziad', email='ziad@rdq.com', score=4)
     marwan = User(name='marwan', email='marwan@rdq.com', score=10)
-    # challenge1 = Challenge(creator=mido, invited=zeez)
-    # challenge2 = Challenge(creator=mido, invited=samir)
-    # challenge3 = Challenge(creator=marwan, invited=mido)
-    # challenge4 = Challenge(creator=mido, invited=zeez)
-    db.session.add_all([marwan, ziad, mido, zeez, samir])
-    # db.session.add_all([challenge4, challenge3, challenge2, challenge1])
+    db.session.add_all([marwan, mido, zeez, samir])
     db.session.commit()
     return "successful"
-
-    # mido = User.query.filter_by(name='mido').first()
-    # challenges = mido.challenges_invited
-    # challenges = mido.challenges_created
-    # challenges = Challenge.query.all()
-    # my = list()
-    # for khara in challenges:
-    #     my.append(str(khara))
-    # return {'challenges': my}
 
 
 @app.route('/image', methods=['POST'])
 def video():
-    
     from video_processing.smile import calc_video_score
     
     if 'image' not in request.files:
         return {'image': 'not found'}
 
-    image = request.files['image']
-    image_name = secure_filename(image.filename)
-    image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
+    try:
+        image = request.files['image']
+        image_name = secure_filename(image.filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
+        
+        myemail = request.form['email']
+        # print(os.path.join(app.config['UPLOAD_FOLDER'], image_name)) 
+        
    
-    # print('C:\\Users\\zeezl\\Desktop\\project Image\\Mood_Detection_CVC\\api\\uploded\\'+image_name)
-   
-    vertical_dist, horizontal_dist = calc_video_score('C:\\Users\\zeezl\\Desktop\\project Image\\Mood_Detection_CVC\\api\\uploded\\'+image_name, video=False)
-   
-    return {'vertical_dist': vertical_dist, 'horizontal_dist': horizontal_dist}
+        # vert, hori = calc_video_score(image_name , video =False)
+        print(1)
+        me = User.query.filter_by(email=myemail).first()
+        print(2)
+        vert, hori = calc_video_score(image_name , video = False)
+        print(3)
+        print(vert,hori)
+        me.vertical_mouth_dist , me.horizontal_mouth_dist = vert, hori
+        print(4)
+        db.session.commit()
+        print(5)
+
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
+        return {'success':'true'}
+    except:
+        return {'success': 'false'}
 
     # video_name = secure_filename(video.filename)
     # video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))

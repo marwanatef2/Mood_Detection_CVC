@@ -130,7 +130,8 @@ def calc_video_score(video_path=None, stored_vert=None, stored_hori=None, video=
 
     else:
       
-        image = cv2.imread(video_path)
+        # image = cv2.imread('C:\\Users\\zeezl\\Desktop\\project Image\\Mood_Detection_CVC\\api\\uploaded\\'+video_path)
+        image = cv2.imread('C:\\Users\\zeezl\\Desktop\\project Image\\Mood_Detection_CVC\\api\\video_processing\\'+video_path)
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
         rects = detector(gray, 0)
