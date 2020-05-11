@@ -297,69 +297,91 @@ def accept_challenge():
     }
 
 
-@app.route("/submitchallenge", methods=["POST"])
-def submit_challenge():
-    myemail = request.form["email"]
+@app.route("/submitchallenge/start", methods=["POST"])
+def get_mouth_vertical_horizontal_distances():
+    data = request.get_json()
+    myemail = data["email"]
     me = User.query.filter_by(email=myemail).first()
-    vert, hori = me.vertical_mouth_dist, me.horizontal_mouth_dist
-
-    if "video" not in request.files:
-        return {"video": "not found"}
-
-    try:
-        video = request.files["video"]
-        video_name = secure_filename(video.filename)
-        video.save(os.path.join(app.config["UPLOAD_FOLDER"], video_name))
-        score = calc_video_score(video_name, vert, hori)
-
-        creator = request.form["creator"]
-        if creator:
-            ids = [int(id) for id in request.form["ids"].split(",")]
-            for id in ids:
-                challenge = Challenge.query.get(id)
-                challenge.creator_score = score
-            db.session.commit()
-            return {"submitted": True}
-        else:
-            challenge = Challenge.query.get(id)
-            challenge.invited_score = score
-            chalenge_creator = challenge.creator
-            creator_state = "lost" if score > challenge.creator_score else "won"
-            body = "You {} the challenge to {}".format(creator_state, me.name)
-            send_notification = Notification(
-                body=body, user=chalenge_creator, date_created=datetime.now()
-            )
-            if creator_state == "won":
-                chalenge_creator.score += 50
-            else:
-                me.score += 50
-            db.session.add(send_notification)
-            db.session.commit()
-            return {"state": "won" if score > challenge.creator_score else "lost"}
-    except:
-        return {"submitted": False}
+    return {
+        "vertical_mouth_dist": me.vertical_mouth_dist,
+        "horizontal_mouth_dist": me.horizontal_mouth_dist,
+    }
 
 
-@app.route("/image", methods=["POST"])
-def get_horizontal_vertical_mouth_distances():
+#         video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
+#         score = calc_video_score(video_name, vert, hori)
+#
+#         creator = request.form['creator']
+#         if creator:
+#             ids = [int(id) for id in request.form['ids'].split(',')]
+#             for id in ids:
+#                 challenge = Challenge.query.get(id)
+#                 challenge.creator_score = score
+#             db.session.commit()
+#             return {'submitted': True}
+#         else:
+#             challenge = Challenge.query.get(id)
+#             challenge.invited_score = score
+#             chalenge_creator = challenge.creator
+#             creator_state = 'lost' if score > challenge.creator_score else 'won'
+#             body = "You {} the challenge to {}".format(creator_state, me.name)
+#             send_notification = Notification(
+#                 body=body, user=chalenge_creator, date_created=datetime.now())
+#             if creator_state == 'won':
+#                 chalenge_creator.score += 50
+#             else:
+#                 me.score += 50
+#             db.session.add(send_notification)
+#             db.session.commit()
+#             return {'state': 'won' if score > challenge.creator_score else 'lost'}
+#     except:
+#         return {"submitted": False}
+
+
+@app.route("/image/start", methods=["POST"])
+def calc_mouth_vertical_horizontal_distances():
     if "image" not in request.files:
         return {"image": "not found"}
 
-    try:
-        image = request.files["image"]
-        image_name = secure_filename(image.filename)
-        image.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
+    image = request.files["image"]
+    image_name = secure_filename(image.filename)
+    image.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
+    vert, hori = calc_video_score(image_name, video=False)
+    os.remove(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
+    return {"vertical_mouth_dist": vert, "horizontal_mouth_dist": hori}
 
-        myemail = request.form["email"]
-        me = User.query.filter_by(email=myemail).first()
-        vert, hori = calc_video_score(image_name, video=False)
-        me.vertical_mouth_dist, me.horizontal_mouth_dist = vert, hori
-        db.session.commit()
 
-        os.remove(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
-        return {"success": "true"}
-    except:
-        return {"success": "false"}
+@app.route("/image/end", methods=["POST"])
+def set_mouth_vertical_horizontal_distances():
+    data = request.get_json()
+    myemail = data["email"]
+    vert, hori = data["vertical_mouth_dist"], data["horizontal_mouth_dist"]
+    me = User.query.filter_by(email=myemail).first()
+    me.vertical_mouth_dist, me.horizontal_mouth_dist = vert, hori
+    db.session.commit()
+    return {"mouth_values_set": True}
+
+
+# @app.route('/image', methods=['POST'])
+# def get_horizontal_vertical_mouth_distances():
+#     if 'image' not in request.files:
+#         return {'image': 'not found'}
+#
+#     try:
+#         image = request.files['image']
+#         image_name = secure_filename(image.filename)
+#         image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
+#
+#         myemail = request.form['email']
+#         me = User.query.filter_by(email=myemail).first()
+#         vert, hori = calc_video_score(image_name, video=False)
+#         me.vertical_mouth_dist, me.horizontal_mouth_dist = vert, hori
+#         db.session.commit()
+#
+#         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
+#         return {'success': 'true'}
+#     except:
+#         return {'success': 'false'}
 
 
 @app.route("/videos")
@@ -380,7 +402,7 @@ def get_all_videos():
 
 @app.route("/db")
 def database():
-    db.drop_all()
+    # db.drop_all()
     db.create_all()
     # mido = User(name='mido', email='mido@rdq.com')
     # zeez = User(name='zeez', email='zeez@rdq.com')
