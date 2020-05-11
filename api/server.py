@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, render_template, request, jsonify
 from flask_login import login_required, logout_user, current_user
-from models import db, login_manager, User, Notification, Challenge
+from models import db, login_manager, User, Notification, Challenge, Video
 from oauth import blueprint
 # from flask_dance.contrib.facebook import make_facebook_blueprint, facebook
 from flask_dance.contrib.google import make_google_blueprint, google
@@ -9,6 +9,8 @@ from operator import itemgetter
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
+from video_processing.smile import calc_video_score
+
 
 app = Flask(__name__)
 db.init_app(app)
@@ -219,17 +221,22 @@ def challenge_user():
     data = request.get_json()
     myemail = data['myemail']
     emails = data['emails']
-    # video_uri = data['video_uri']
+    video_id = int(data['video_id'])
     me = User.query.filter_by(email=myemail).first()
+    video = Video.query.get(video_id)
     body = "{} has challenged you. Tap to accept!".format(me.name)
+    ids = []
     for email in emails:
         user = User.query.filter_by(email=email).first()
         notification = Notification(body=body, user=user, date_created=datetime.now())
-        challenge = Challenge(creator=me, invited=user, date_created=datetime.now())
+        challenge = Challenge(creator=me, invited=user, video=video,
+                              date_created=datetime.now())
         notification.challenge = challenge
-        db.session.add_all([notification, challenge])
-    db.session.commit()
-    return {'challenged': True}
+        db.session.add(notification)
+        db.session.commit()
+        ids.append(str(challenge.id))
+    ids = ",".join(ids)
+    return {'challenges_ids': ids}
 
 
 @app.route('/acceptchallenge', methods=['POST'])
@@ -237,33 +244,60 @@ def accept_challenge():
     data = request.get_json()
     key = int(data['key'])
     notification = Notification.query.get(key)
-    acceptor = notification.user
+    # acceptor = notification.user
     challenge = notification.challenge
     creator = challenge.creator
-    body = "{} has accepted your challenge.".format(acceptor.name)
-    send_notification = Notification(body=body, user=creator, date_created=datetime.now())
-    db.session.add(send_notification)
-    db.session.commit()
-    return {'creator': creator.name, 'video_uri': challenge.video_uri}
+    # body = "{} has accepted your challenge.".format(acceptor.name)
+    # send_notification = Notification(body=body, user=creator, date_created=datetime.now())
+    # db.session.add(send_notification)
+    # db.session.commit()
+    return {'creator': creator.name, 'video_uri': str(challenge.video_uri), 'challenge_id': challenge.id}
 
 
-@app.route('/db')
-def database():
-    db.drop_all()
-    db.create_all()
-    mido = User(name='mido', email='mido@rdq.com', score=5)
-    zeez = User(name='zeez', email='zeez@rdq.com', score=100)
-    samir = User(name='samir', email='samir@rdq.com', score=5)
-    marwan = User(name='marwan', email='marwan@rdq.com', score=10)
-    db.session.add_all([marwan, mido, zeez, samir])
-    db.session.commit()
-    return "successful"
+@app.route('/submitchallenge', methods=['POST'])
+def submit_challenge():
+    myemail = request.form['email']
+    me = User.query.filter_by(email=myemail).first()
+    vert, hori = me.vertical_mouth_dist, me.horizontal_mouth_dist
+
+    if 'video' not in request.files:
+        return {'video': 'not found'}
+
+    try:
+        video = request.files['video']
+        video_name = secure_filename(video.filename)
+        video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
+        score = calc_video_score(video_name, vert, hori)
+
+        creator = request.form['creator']
+        if creator:
+            ids = [int(id) for id in request.form['ids'].split(',')]
+            for id in ids:
+                challenge = Challenge.query.get(id)
+                challenge.creator_score = score
+            db.session.commit()
+            return {'submitted': True}
+        else:
+            challenge = Challenge.query.get(id)
+            challenge.invited_score = score
+            chalenge_creator = challenge.creator
+            creator_state = 'lost' if score > challenge.creator_score else 'won'
+            body = "You {} the challenge to {}".format(creator_state, me.name)
+            send_notification = Notification(
+                body=body, user=chalenge_creator, date_created=datetime.now())
+            if creator_state == 'won':
+                chalenge_creator.score += 50
+            else:
+                me.score += 50
+            db.session.add(send_notification)
+            db.session.commit()
+            return {'state': 'won' if score > challenge.creator_score else 'lost'}
+    except:
+        return {"submitted": False}
 
 
 @app.route('/image', methods=['POST'])
-def video():
-    from video_processing.smile import calc_video_score
-    
+def get_horizontal_vertical_mouth_distances():
     if 'image' not in request.files:
         return {'image': 'not found'}
 
@@ -271,34 +305,45 @@ def video():
         image = request.files['image']
         image_name = secure_filename(image.filename)
         image.save(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
-        
+
         myemail = request.form['email']
-        # print(os.path.join(app.config['UPLOAD_FOLDER'], image_name)) 
-        
-   
-        # vert, hori = calc_video_score(image_name , video =False)
-        print(1)
         me = User.query.filter_by(email=myemail).first()
-        print(2)
-        vert, hori = calc_video_score(image_name , video = False)
-        print(3)
-        print(vert,hori)
-        me.vertical_mouth_dist , me.horizontal_mouth_dist = vert, hori
-        print(4)
+        vert, hori = calc_video_score(image_name, video=False)
+        me.vertical_mouth_dist, me.horizontal_mouth_dist = vert, hori
         db.session.commit()
-        print(5)
 
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], image_name))
-        return {'success':'true'}
+        return {'success': 'true'}
     except:
         return {'success': 'false'}
 
-    # video_name = secure_filename(video.filename)
-    # video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
 
-    # return "successful"
-    # score = calc_video_score(uri)
-    # return {'score': score}
+@app.route('/videos')
+def get_all_videos():
+    db_videos = Video.query.all()
+    videos = []
+    for video in db_videos:
+        videos.append({'key': video.id, 'uri': video.uri, 'name': video.name,
+                       'youtube_link': video.youtube_link})
+    return {'videos': videos}
+
+
+@app.route('/db')
+def database():
+    db.drop_all()
+    db.create_all()
+    # mido = User(name='mido', email='mido@rdq.com')
+    # zeez = User(name='zeez', email='zeez@rdq.com')
+    # samir = User(name='samir', email='samir@rdq.com')
+    # marwan = User(name='marwan', email='marwan@rdq.com')
+    # db.session.add_all([marwan, mido, zeez, samir])
+    video1 = Video(uri='https://apec-eg.com/video/video1.mp4',
+                   youtube_link='https://www.youtube.com/watch?v=kh4y_AyX_1M')
+    video2 = Video(uri='https://apec-eg.com/video/video2.mp4',
+                   youtube_link='https://www.youtube.com/watch?v=p32OC97aNqc&t=53s')
+    db.session.add_all([video1, video2])
+    db.session.commit()
+    return "successful"
 
 
 # @app.route('/uri', methods=['GET'])

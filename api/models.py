@@ -31,7 +31,6 @@ class User(UserMixin, db.Model):
     vertical_mouth_dist = db.Column(db.Float)
     horizontal_mouth_dist = db.Column(db.Float)
 
-
     def __repr__(self):
         return '<User {}>'.format(self.name)
 
@@ -67,15 +66,28 @@ class Challenge(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     invited_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    video_uri = db.Column(db.String(200), nullable=False, default='nothing for now')
+    video_id = db.Column(db.Integer, db.ForeignKey('video.id'), nullable=False)
+    video = db.relationship('Video', lazy=True)
     date_created = db.Column(db.DateTime, nullable=False)
     creator = db.relationship(User, primaryjoin=(
         creator_id == User.id), backref='challenges_created')
     invited = db.relationship(User, primaryjoin=(
         invited_id == User.id), backref='challenges_invited')
+    creator_score = db.Column(db.Integer)
+    invited_score = db.Column(db.Integer)
 
     def __repr__(self):
         return '<Challenge from {} to {}>'.format(self.creator, self.invited)
+
+
+class Video(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uri = db.Column(db.String(80), nullable=False)
+    name = db.Column(db.String(200), nullable=False, default="mod7ek khaleees mod7ek gidaaan")
+    youtube_link = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return self.uri
 
 
 # setup login manager
