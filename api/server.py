@@ -253,7 +253,7 @@ def accept_challenge():
     # db.session.commit()
     return {'creator': creator.name, 'video_uri': str(challenge.video_uri), 'challenge_id': challenge.id}
 
-
+# divided submit_challenge into 3 sections
 @app.route('/submitchallenge/start', methods=['POST'])
 def get_mouth_vertical_horizontal_distances():
     data = request.get_json()
