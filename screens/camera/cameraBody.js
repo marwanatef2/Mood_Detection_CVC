@@ -172,8 +172,8 @@ export default function Cbody({
         <TouchableOpacity style={{ flex: 1 }}>
           <Video
             ref={handelVideoRef}
-            source={require("../../assets/videos/video1.mp4")}
-            // source={{ uri }}
+            // source={require("../../assets/videos/video1.mp4")}
+            source={{ uri }}
             shouldPlay
             resizeMode="contain"
             style={{ width, height: "100%" }}
@@ -198,7 +198,7 @@ export default function Cbody({
       >
         <ActivityIndicator size="large" color="white" />
         <Text style={{ textAlign: "center", color: "white" }}>
-          Please wait where we upload your Video
+          Please wait while we upload your Video
         </Text>
       </View>
     );

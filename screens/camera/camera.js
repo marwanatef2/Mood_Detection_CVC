@@ -160,7 +160,7 @@ export default function caamera({ firstLogin, navigation }) {
       >
         <ActivityIndicator size="large" color="white" />
         <Text style={{ textAlign: "center", color: "white" }}>
-          Please wait where we upload your photo
+          Please wait while we upload your photo
         </Text>
       </View>
     );
