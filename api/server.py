@@ -287,8 +287,9 @@ def accept_challenge():
     data = request.get_json()
     key = int(data["key"])
     notification = Notification.query.get(key)
-    # acceptor = notification.user
+    acceptor = notification.user
     challenge = notification.challenge
+    video = challenge.video
     creator = challenge.creator
     # body = "{} has accepted your challenge.".format(acceptor.name)
     # send_notification = Notification(body=body, user=creator, date_created=datetime.now())
@@ -296,20 +297,20 @@ def accept_challenge():
     # db.session.commit()
     return {
         "creator": creator.name,
-        "video_uri": str(challenge.video_uri),
+        "video_uri": str(video.uri),
         "challenge_id": challenge.id,
+        "mouth_aspect_ratio": acceptor.mouth_aspect_ratio
     }
 
 
-# @app.route("/submitchallenge/start", methods=["POST"])
-# def get_mouth_vertical_horizontal_distances():
-#     data = request.get_json()
-#     myemail = data["email"]
-#     me = User.query.filter_by(email=myemail).first()
-#     return {
-#         "vertical_mouth_dist": me.vertical_mouth_dist,
-#         "horizontal_mouth_dist": me.horizontal_mouth_dist,
-#     }
+@app.route("/submitchallenge/start", methods=["POST"])
+def get_mouth_vertical_horizontal_distances():
+    data = request.get_json()
+    myemail = data["email"]
+    me = User.query.filter_by(email=myemail).first()
+    return {
+        "mouth_aspect_ratio": me.mouth_aspect_ratio
+    }
 
 
 @app.route("/submitchallenge/sendvideo", methods=["POST"])
