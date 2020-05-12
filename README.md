@@ -19,3 +19,10 @@ To begin developing just run the following in CLI:
     > pip install -r requirements.txt
 6. To run server
     > flask run
+
+To Start the App:
+
+1. Download dependicies
+    > npm install
+2. Run App
+    > npm start
