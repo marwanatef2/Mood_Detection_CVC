@@ -61,6 +61,8 @@ export default function Profile({ navigation }) {
       exists: user.exists,
     });
   };
+
+  // navigate to the camera and load the specific video for the challenge when user press the notification
   const handlePressChallenge = (key) => {
     // console.log(key);
     axios
@@ -81,41 +83,47 @@ export default function Profile({ navigation }) {
       })
       .catch((err) => console.log(err));
   };
+
+  //navigate to ScoreBoard and give it the email to fetch the user's friend and show there scores
+  const handlePressScoreBoard = () => {
+    navigation.navigate("ScoreBoard", {
+      email: user.email,
+    });
+  };
   if (loaded)
     return (
-      <ScrollView onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
-          <TouchableOpacity onPress={returnHome}>
-            <ImageBackground
-              source={require("../../assets/cover.jpg")}
-              style={{ ...styles.wrapper }}
-              overlayColor="#444"
-              opacity={1}
-              // borderRadius={90}
-              // borderColor="#ddd"
-              // borderWidth={15}
-              // blurRadius={0}
-            >
-              <View style={{ height: 200, backgroundColor: "rgba(0,0,0,0.2)" }}>
-                <Text> </Text>
-              </View>
-            </ImageBackground>
-          </TouchableOpacity>
-          <View style={styles.content}>
-            <Content name={user.name} pic={user.pic} />
-            <Buttons
-              returnHome={returnHome}
-              start={start}
-              notifications={notifications}
-              email={user.email}
-              exists={user.exists}
-              handlePressChallenge={handlePressChallenge}
-            />
-          </View>
-          {msg && <Text style={{ fontSize: 40, color: "black" }}>{msg}</Text>}
-          <FriendsList style={{}} loggedEmail={user.email} />
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity onPress={returnHome}>
+          <ImageBackground
+            source={require("../../assets/cover.jpg")}
+            style={{ ...styles.wrapper }}
+            overlayColor="#444"
+            opacity={1}
+            // borderRadius={90}
+            // borderColor="#ddd"
+            // borderWidth={15}
+            // blurRadius={0}
+          >
+            <View style={{ height: 200, backgroundColor: "rgba(0,0,0,0.2)" }}>
+              <Text> </Text>
+            </View>
+          </ImageBackground>
+        </TouchableOpacity>
+        <View style={styles.content}>
+          <Content name={user.name} pic={user.pic} />
+          <Buttons
+            returnHome={returnHome}
+            start={start}
+            notifications={notifications}
+            email={user.email}
+            exists={user.exists}
+            handlePressChallenge={handlePressChallenge}
+            handlePressScoreBoard={handlePressScoreBoard}
+          />
         </View>
-      </ScrollView>
+        {msg && <Text style={{ fontSize: 40, color: "black" }}>{msg}</Text>}
+        <FriendsList style={{}} loggedEmail={user.email} />
+      </View>
     );
   else
     return (

@@ -10,13 +10,13 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import Modall from "./notificationsModal";
-import axios from "axios";
 
 export default function Buttons({
   start,
   notifications,
   email,
   handlePressChallenge,
+  handlePressScoreBoard,
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -55,7 +55,10 @@ export default function Buttons({
             Start Challenge
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.scoreboard}>
+        <TouchableOpacity
+          style={styles.scoreboard}
+          onPress={() => handlePressScoreBoard()}
+        >
           <Text
             style={{
               fontFamily: "nunito-regular",

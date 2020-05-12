@@ -7,7 +7,7 @@ import Profile from "../screens/profile/profile";
 import Camera from "../screens/camera/camera";
 import Header from "../shared/header";
 import React from "react";
-
+import ScoreBoard from "../screens/profile/scoreboard";
 import SelectChallege from "../screens/profile/selectChallenge";
 import StartChallenge from "../screens/profile/startChallenge";
 import App from "../screens/camera/draggable";
@@ -65,6 +65,16 @@ const screens = {
     navigationOptions: ({ navigation }) => {
       return {
         headerTitle: () => <Header navigation={navigation} title="Challenge" />,
+      };
+    },
+  },
+  ScoreBoard: {
+    screen: ScoreBoard,
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: () => (
+          <Header navigation={navigation} title="ScoreBoard" />
+        ),
       };
     },
   },
