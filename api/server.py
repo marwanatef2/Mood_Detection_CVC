@@ -325,8 +325,7 @@ def submit_video():
     video_name = secure_filename(video.filename)
     video.save(os.path.join(app.config["UPLOAD_FOLDER"], video_name))
     score = calc_video_score(video_name, float(mar))
-    return {"score": score}  # ba2olk 2l exists deh msh btb2a true msh btt8er 2slun
-    # la estana ht check leeh ok
+    return {"score": score}  
 
 
 @app.route("/submitchallenge/getscore", methods=["POST"])
