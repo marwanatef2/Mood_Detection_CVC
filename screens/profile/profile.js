@@ -28,6 +28,7 @@ export default function Profile({ navigation }) {
 
   const [notifications, setNotifications] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [msg, setMsg] = useState(false);
 
   // fetch the notifications by requesting /notifications and giving it the logged user email as a data
   // returning object notifications
@@ -38,7 +39,7 @@ export default function Profile({ navigation }) {
           myemail: user.email,
         })
         .then((res) => {
-          // console.log(res.data.notifications);
+          console.log(res.data.notifications);
           setNotifications(res.data.notifications);
           setLoaded(true);
         });
@@ -59,6 +60,26 @@ export default function Profile({ navigation }) {
       email: user.email,
       exists: user.exists,
     });
+  };
+  const handlePressChallenge = (key) => {
+    // console.log(key);
+    axios
+      .post("https://marwanatef2.pythonanywhere.com/acceptchallenge", {
+        key: key,
+      })
+      .then((res) => {
+        console.log(res.data);
+        let { challenge_id, creator, mouth_aspect_ratio, video_uri } = res.data;
+        navigation.navigate("Camera", {
+          uri: video_uri,
+          email: user.email,
+          challengesID: challenge_id,
+          mar: mouth_aspect_ratio,
+          exists: user.exists,
+          creator: false,
+        });
+      })
+      .catch((err) => console.log(err));
   };
   if (loaded)
     return (
@@ -88,8 +109,10 @@ export default function Profile({ navigation }) {
               notifications={notifications}
               email={user.email}
               exists={user.exists}
+              handlePressChallenge={handlePressChallenge}
             />
           </View>
+          {msg && <Text style={{ fontSize: 40, color: "black" }}>{msg}</Text>}
           <FriendsList style={{}} loggedEmail={user.email} />
         </View>
       </ScrollView>

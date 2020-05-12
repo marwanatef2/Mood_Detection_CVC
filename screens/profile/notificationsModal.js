@@ -13,7 +13,12 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import Notification from "./notification";
 
-export default function Modall({ notifications, modalStatus, closeModal }) {
+export default function Modall({
+  notifications,
+  modalStatus,
+  closeModal,
+  handlePressChallenge,
+}) {
   return (
     <View>
       <Modal visible={modalStatus} animationType="slide">
@@ -39,17 +44,34 @@ export default function Modall({ notifications, modalStatus, closeModal }) {
             </Text>
             <FlatList
               contentContainerStyle={{ paddingBottom: 20 }}
-              keyExtractor={(item) => item.datetime}
+              keyExtractor={(item) => item.key.toString()}
               data={notifications}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => console.log("pressed")}>
-                  <Notification
-                    body={item.body}
-                    date={item.datetime}
-                    newS={item.new}
-                  />
-                </TouchableOpacity>
-              )}
+              renderItem={({ item }) =>
+                item.is_challenge ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      handlePressChallenge(item.key);
+                      closeModal();
+                    }}
+                  >
+                    <Notification
+                      body={item.body}
+                      date={item.datetime}
+                      newS={item.new}
+                      icon="challenge"
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <View>
+                    <Notification
+                      body={item.body}
+                      date={item.datetime}
+                      newS={item.new}
+                      icon="friend"
+                    />
+                  </View>
+                )
+              }
               style={{
                 padding: 20,
                 marginVertical: 10,

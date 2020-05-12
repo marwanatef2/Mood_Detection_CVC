@@ -21,6 +21,7 @@ export default function caamera({ firstLogin, navigation }) {
 
   const uri = navigation.state.params.uri;
   const email = navigation.state.params.email;
+  const creator = navigation.state.params.creator;
   // this function is responsible to send the captured photo to the server to get the face values
   const goHome = () => {
     navigation.navigate("Profile");
@@ -46,8 +47,7 @@ export default function caamera({ firstLogin, navigation }) {
         .then(function (response) {
           //handle success
           console.log(response.data);
-          setVertical(response.data.vertical_mouth_dist);
-          setHorizontal(response.data.horizontal_mouth_dist);
+          setMar(response.data.mouth_aspect_ratio);
           axios
             .post("https://marwanatef2.pythonanywhere.com/image/end", {
               email: email,
@@ -55,7 +55,7 @@ export default function caamera({ firstLogin, navigation }) {
             })
             .then((res) => {
               console.log(res.data);
-              if (res.data.mouth_values_set) {
+              if (res.data.mar_set) {
                 setTookPhoto(true);
                 setLoadding(false);
               }
@@ -77,10 +77,10 @@ export default function caamera({ firstLogin, navigation }) {
         <Cbody
           uri={uri}
           goHome={goHome}
-          vertical={vertical}
-          horizontal={horizontal}
           mar={mar}
           challengesID={IDs}
+          creator={creator}
+          email={email}
         />
       );
     else {

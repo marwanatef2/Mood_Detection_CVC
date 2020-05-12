@@ -40,6 +40,7 @@ export default function StartChallenge({ start, navigation }) {
           challengesID: res.data.challenges_ids,
           mar: res.data.mouth_aspect_ratio,
           exists: exists,
+          creator: true,
         });
       })
       .catch((err) => console.log(err));

@@ -3,7 +3,7 @@
 import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
-export default function Notification({ body, date, newS }) {
+export default function Notification({ body, date, newS, icon }) {
   return (
     <View
       style={
@@ -11,11 +11,16 @@ export default function Notification({ body, date, newS }) {
       }
     >
       <View style={styles.wrapper}>
-        <FontAwesome5
-          name="user-friends"
-          size={25}
-          style={{ color: "#e6af22" }}
-        />
+        {icon === "friend" ? (
+          <FontAwesome5
+            name="user-friends"
+            size={25}
+            style={{ color: "#e6af22" }}
+          />
+        ) : (
+          <FontAwesome5 name="gamepad" size={25} style={{ color: "#e6af22" }} />
+        )}
+
         <Text style={styles.textinput}>{body}</Text>
       </View>
 

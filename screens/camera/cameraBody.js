@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import Drag from "./draggable";
 import * as FaceDetector from "expo-face-detector";
@@ -16,7 +17,14 @@ import { Camera } from "expo-camera";
 
 import { Video } from "expo-av";
 import { color } from "react-native-reanimated";
-export default function Cbody({ uri, goHome, challengesID, mar }) {
+export default function Cbody({
+  uri,
+  goHome,
+  challengesID,
+  mar,
+  creator,
+  email,
+}) {
   const { width } = Dimensions.get("window");
   const [type, setType] = useState(Camera.Constants.Type.front);
   const [cameraRef, setCameraRef] = useState(null);
@@ -64,12 +72,6 @@ export default function Cbody({ uri, goHome, challengesID, mar }) {
           });
           formData.append("mouth_aspect_ratio", mar);
 
-          // const { status } = await MediaLibrary.requestPermissionsAsync();
-          // MediaLibrary.saveToLibraryAsync(data.uri).then(() => {
-          //   setLoad(true);
-          //   console.log("saved");
-          // });
-          // console.log(formData);
           axios({
             method: "post",
             url: url,
@@ -79,7 +81,33 @@ export default function Cbody({ uri, goHome, challengesID, mar }) {
             .then(function (response) {
               //handle success
               console.log("score : ", response.data.score);
-              setLoadding(false);
+              let score = response.data.score;
+
+              axios
+                .post(
+                  "https://marwanatef2.pythonanywhere.com/submitchallenge/getscore",
+                  {
+                    email: email,
+                    score: score,
+                    creator: creator,
+                    id: challengesID,
+                    ids: challengesID,
+                  }
+                )
+                .then((res) => {
+                  console.log("zeez ", res.data);
+
+                  Alert.alert(
+                    "Video Recorded",
+                    res.data.submitted
+                      ? "You have submitted the video please wait for the other to finish"
+                      : `you have ${res.data.state}`,
+                    [{ text: "Profile", onPress: () => goHome() }],
+                    { cancelable: false }
+                  );
+                  // if (res.data) setLoadding(false);
+                })
+                .catch((err) => console.log(err));
             })
             .catch(function (response) {
               //handle error

@@ -10,8 +10,14 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import Modall from "./notificationsModal";
+import axios from "axios";
 
-export default function Buttons({ start, notifications, email }) {
+export default function Buttons({
+  start,
+  notifications,
+  email,
+  handlePressChallenge,
+}) {
   const [modalOpen, setModalOpen] = useState(false);
 
   // check if there is new notifications
@@ -64,6 +70,7 @@ export default function Buttons({ start, notifications, email }) {
           modalStatus={modalOpen}
           notifications={notifications}
           closeModal={closeModal}
+          handlePressChallenge={handlePressChallenge}
         />
       </View>
     </View>
