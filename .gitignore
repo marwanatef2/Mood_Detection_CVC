@@ -11,6 +11,7 @@ web-build/
 web-report/
 __pycache__/
 virenv/
-
+.api/venv/
 # macOS
 .DS_Store
+node_modules
