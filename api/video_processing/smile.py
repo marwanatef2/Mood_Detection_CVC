@@ -177,7 +177,7 @@ def calc_video_score(video_path=None, stored_mar=None, video=True):
             face = face_utils.shape_to_np(shape)
             mouth = face[mStart:mEnd]
 
-            vert, hori = smile_mar(mouth)
+            mar = smile_mar(mouth)
 
             mouthHull = cv2.convexHull(mouth)
             facehull = cv2.convexHull(face)

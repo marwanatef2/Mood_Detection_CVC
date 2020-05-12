@@ -35,6 +35,7 @@ def google_logged_in(blueprint, token):
     query = User.query.filter_by(email=user_email)
     try:
         user = query.one()
+        user.exists = True
     except NoResultFound:
         user = User(email=user_email, name=user_name, image=user_picture)
 

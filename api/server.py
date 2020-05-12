@@ -28,7 +28,7 @@ def home():
         # resp = google.get("/oauth2/v1/userinfo")
         # if resp.ok:
         #     return render_template("zeez.html", userinfo=resp.json())
-        userinfo = {'name': current_user.name, 'email': current_user.email, 'image': current_user.image, 'exists': "true" if current_user.mouth_aspect_ratio is not None else "false"}
+        userinfo = {'name': current_user.name, 'email': current_user.email, 'image': current_user.image, 'exists': current_user.exists}
         return render_template("zeez.html", userinfo=userinfo)
     else:
         return "hello nobody"
@@ -196,6 +196,7 @@ def notifications():
                 "datetime": notification.date_created.strftime("%d/%m %I:%M%p"),
                 "new": notification.date_created > me.last_checked,
                 "key": notification.id,
+                "is_challenge": notification.type_challenge
             }
         )
     notifications.reverse()
@@ -269,7 +270,7 @@ def challenge_user():
     ids = []
     for email in emails:
         user = User.query.filter_by(email=email).first()
-        notification = Notification(body=body, user=user, date_created=datetime.now())
+        notification = Notification(body=body, user=user, date_created=datetime.now(), type_challenge=True)
         challenge = Challenge(
             creator=me, invited=user, video=video, date_created=datetime.now()
         )
@@ -316,12 +317,13 @@ def submit_video():
     if "video" not in request.files:
         return {"video": "not found"}
 
-    mar = request.form["mouth_aspect_ratio"]
-    video = request.files["video"]
+    mar = request.form["mouth_aspect_ratio"] 
+    video = request.files["video"] 
     video_name = secure_filename(video.filename)
     video.save(os.path.join(app.config["UPLOAD_FOLDER"], video_name))
-    score = calc_video_score(video_name, vert, hori)
-    return {"score": score}
+    score = calc_video_score(video_name, float(mar))
+    return {"score": score} #ba2olk 2l exists deh msh btb2a true msh btt8er 2slun 
+    # la estana ht check leeh ok
 
 
 @app.route("/submitchallenge/getscore", methods=["POST"])
@@ -419,9 +421,9 @@ def set_mouth_vertical_horizontal_distances():
     myemail = data["email"]
     mar = data["mouth_aspect_ratio"]
     me = User.query.filter_by(email=myemail).first()
-    me.mouth_aspect_ratio = mar
+    me.mouth_aspect_ratio = float(mar)
     db.session.commit()
-    return {"mar_set": True}
+    return {"mar_set": True} 
 
 
 # @app.route('/image', methods=['POST'])

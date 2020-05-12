@@ -28,7 +28,8 @@ class User(UserMixin, db.Model):
                                 lazy='dynamic')
     notifications = db.relationship('Notification', backref='user', lazy=True)
     last_checked = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    mouth_aspect_ratio = db.Column(db.Float)
+    mouth_aspect_ratio = db.Column(db.Float, default=-1)
+    exists = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
@@ -59,6 +60,7 @@ class Notification(db.Model):
     date_created = db.Column(db.DateTime, nullable=False)
     challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'), nullable=True)
     challenge = db.relationship('Challenge', lazy=True)
+    type_challenge = db.Column(db.Boolean, default=False)
 
 
 class Challenge(db.Model):
