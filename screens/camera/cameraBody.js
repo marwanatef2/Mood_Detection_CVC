@@ -16,12 +16,12 @@ import { Camera } from "expo-camera";
 
 import { Video } from "expo-av";
 import { color } from "react-native-reanimated";
-export default function Cbody() {
+export default function Cbody({ uri, goHome, challengesID, mar }) {
   const { width } = Dimensions.get("window");
   const [type, setType] = useState(Camera.Constants.Type.front);
   const [cameraRef, setCameraRef] = useState(null);
   const [videoRef, setVideoRef] = useState(null);
-  const [loaaaad, setLoad] = useState(true);
+  const [loading, setLoadding] = useState(false);
 
   const takePicture = async () => {
     if (cameraRef) {
@@ -47,41 +47,44 @@ export default function Cbody() {
   // function responsible to record the video and send it after the challenge video is over to get the score
   const takeVideo = async () => {
     if (cameraRef) {
-      let url = "http://192.168.1.110:5000/video";
+      let url = "http://192.168.1.110:5000/submitchallenge/sendvideo";
       cameraRef
         .recordAsync({
+          quality: Camera.Constants.VideoQuality["480p"],
           maxDuration: 5,
-          quality: Camera.Constants.VideoQuality["720p"],
         })
         .then((data) => {
-          setLoad(false);
+          setLoadding(true);
           console.log("uri :", data.uri);
           let formData = new FormData();
           formData.append("video", {
-            name: "marwan.mp4",
+            name: "zeez.mp4",
             uri: data.uri,
             type: "video/mp4",
           });
+          formData.append("mouth_aspect_ratio", mar);
+
           // const { status } = await MediaLibrary.requestPermissionsAsync();
-          MediaLibrary.saveToLibraryAsync(data.uri).then(() => {
-            setLoad(true);
-            console.log("saved");
-          });
+          // MediaLibrary.saveToLibraryAsync(data.uri).then(() => {
+          //   setLoad(true);
+          //   console.log("saved");
+          // });
           // console.log(formData);
-          // axios({
-          //   method: "post",
-          //   url: url,
-          //   data: formData,
-          //   headers: { "Content-Type": "multipart/form-data" },
-          // })
-          //   .then(function (response) {
-          //     //handle success
-          //     console.log(response);
-          //   })
-          //   .catch(function (response) {
-          //     //handle error
-          //     console.log(response);
-          //   });
+          axios({
+            method: "post",
+            url: url,
+            data: formData,
+            headers: { "Content-Type": "multipart/form-data" },
+          })
+            .then(function (response) {
+              //handle success
+              console.log("score : ", response.data.score);
+              setLoadding(false);
+            })
+            .catch(function (response) {
+              //handle error
+              console.log(response);
+            });
         });
 
       // setPhoto(uri);
@@ -110,61 +113,67 @@ export default function Cbody() {
   const onUpdate = (ps) => {
     if (ps.didJustFinish && !ps.isLooping) {
       // The player has just finished playing and will stop. Maybe you want to play something else?
-      // stopVideo();
+      stopVideo();
     }
   };
-  // if (load)
-  return (
-    <View style={{ flex: 1, ...styles.wrapper }}>
-      <Drag styles={styles.container}>
-        <Camera
-          style={styles.cameraBody}
-          type={type}
-          ref={(ref) => {
-            setCameraRef(ref);
-          }}
-          whiteBalance={Camera.Constants.WhiteBalance.auto}
-          autoFocus={Camera.Constants.AutoFocus.on}
-          zoom={0}
-          useCamera2Api={true}
-          // onFacesDetected={handleFacesDetected}
-          // faceDetectorSettings={{
-          //   mode: FaceDetector.Constants.Mode.fast,
-          //   detectLandmarks: FaceDetector.Constants.Landmarks.all,
-          //   runClassifications: FaceDetector.Constants.Classifications.all,
-          //   tracking: true,
-          // }}
-        />
-      </Drag>
+  if (!loading)
+    return (
+      <View style={{ flex: 1, ...styles.wrapper }}>
+        <Drag styles={styles.container}>
+          <Camera
+            style={styles.cameraBody}
+            type={type}
+            ref={(ref) => {
+              setCameraRef(ref);
+            }}
+            whiteBalance={Camera.Constants.WhiteBalance.auto}
+            autoFocus={Camera.Constants.AutoFocus.on}
+            zoom={0}
+            onCameraReady={() => takeVideo()}
 
-      <TouchableOpacity style={{ flex: 1 }}>
-        <Video
-          ref={handelVideoRef}
-          source={require("../../assets/videos/blog.mp4")}
-          shouldPlay
-          resizeMode="contain"
-          style={{ width, height: "100%" }}
-          // onLoadStart={() => takeVideo()}
-          useNativeControls={true}
-          onPlaybackStatusUpdate={(ps) => onUpdate(ps)}
-          volume={0}
-        />
-      </TouchableOpacity>
-    </View>
-  );
-  // else
-  //   return (
-  //     <View
-  //       style={{
-  //         flex: 1,
-  //         flexDirection: "row",
-  //         alignContent: "center",
-  //         justifyContent: "center",
-  //       }}
-  //     >
-  //       <ActivityIndicator size="large" color="#0000ff" />
-  //     </View>
-  //   );
+            // onFacesDetected={handleFacesDetected}
+            // faceDetectorSettings={{
+            //   mode: FaceDetector.Constants.Mode.fast,
+            //   detectLandmarks: FaceDetector.Constants.Landmarks.all,
+            //   runClassifications: FaceDetector.Constants.Classifications.all,
+            //   tracking: true,
+            // }}
+          />
+        </Drag>
+
+        <TouchableOpacity style={{ flex: 1 }}>
+          <Video
+            ref={handelVideoRef}
+            source={require("../../assets/videos/video1.mp4")}
+            // source={{ uri }}
+            shouldPlay
+            resizeMode="contain"
+            style={{ width, height: "100%" }}
+            // onLoadStart={() => takeVideo()}
+            useNativeControls={true}
+            onPlaybackStatusUpdate={(ps) => onUpdate(ps)}
+            volume={0}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  else
+    return (
+      <View
+        style={{
+          flex: 1,
+          flexDirection: "column",
+          alignContent: "center",
+          justifyContent: "center",
+          backgroundColor: "black",
+        }}
+      >
+        <ActivityIndicator size="large" color="white" />
+        <Text style={{ textAlign: "center", color: "white" }}>
+          Please wait where we upload your Video
+        </Text>
+      </View>
+    );
 }
 
 const styles = StyleSheet.create({

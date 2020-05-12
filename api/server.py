@@ -25,9 +25,11 @@ app.register_blueprint(blueprint, url_prefix="/login")
 @app.route("/")
 def home():
     if current_user.is_authenticated:
-        resp = google.get("/oauth2/v1/userinfo")
-        if resp.ok:
-            return render_template("zeez.html", userinfo=resp.json())
+        # resp = google.get("/oauth2/v1/userinfo")
+        # if resp.ok:
+        #     return render_template("zeez.html", userinfo=resp.json())
+        userinfo = {'name': current_user.name, 'email': current_user.email, 'image': current_user.image, 'exists': "true" if current_user.mouth_aspect_ratio is not None else "false"}
+        return render_template("zeez.html", userinfo=userinfo)
     else:
         return "hello nobody"
 
@@ -261,6 +263,7 @@ def challenge_user():
     emails = data["emails"]
     video_id = int(data["video_id"])
     me = User.query.filter_by(email=myemail).first()
+    mar = me.mouth_aspect_ratio
     video = Video.query.get(video_id)
     body = "{} has challenged you. Tap to accept!".format(me.name)
     ids = []
@@ -275,7 +278,7 @@ def challenge_user():
         db.session.commit()
         ids.append(str(challenge.id))
     ids = ",".join(ids)
-    return {"challenges_ids": ids}
+    return {"challenges_ids": ids, 'mouth_aspect_ratio': mar}
 
 
 @app.route("/acceptchallenge", methods=["POST"])
@@ -297,62 +300,62 @@ def accept_challenge():
     }
 
 
-@app.route("/submitchallenge/start", methods=["POST"])
-def get_mouth_vertical_horizontal_distances():
+# @app.route("/submitchallenge/start", methods=["POST"])
+# def get_mouth_vertical_horizontal_distances():
+#     data = request.get_json()
+#     myemail = data["email"]
+#     me = User.query.filter_by(email=myemail).first()
+#     return {
+#         "vertical_mouth_dist": me.vertical_mouth_dist,
+#         "horizontal_mouth_dist": me.horizontal_mouth_dist,
+#     }
+
+
+@app.route("/submitchallenge/sendvideo", methods=["POST"])
+def submit_video():
+    if "video" not in request.files:
+        return {"video": "not found"}
+
+    mar = request.form["mouth_aspect_ratio"]
+    video = request.files["video"]
+    video_name = secure_filename(video.filename)
+    video.save(os.path.join(app.config["UPLOAD_FOLDER"], video_name))
+    score = calc_video_score(video_name, vert, hori)
+    return {"score": score}
+
+
+@app.route("/submitchallenge/getscore", methods=["POST"])
+def calculate_challenge_winner():
     data = request.get_json()
     myemail = data["email"]
     me = User.query.filter_by(email=myemail).first()
-    return {
-        "vertical_mouth_dist": me.vertical_mouth_dist,
-        "horizontal_mouth_dist": me.horizontal_mouth_dist,
-    }
-
-
-@app.route('/submitchallenge/sendvideo', methods=['POST'])
-def submit_video():
-    if 'video' not in request.files:
-        return {'video': 'not found'}
-
-    vert = request.form['vertical_mouth_dist']
-    hori = request.form['horizontal_mouth_dist']
-    video = request.files['video']
-    video_name = secure_filename(video.filename)
-    video.save(os.path.join(app.config['UPLOAD_FOLDER'], video_name))
-    score = calc_video_score(video_name, vert, hori)
-    return {'score': score}
-
-
-@app.route('/submitchallenge/end', methods=['POST'])
-def calculate_challenge_winner():
-    data = request.get_json()
-    myemail = data['email']
-    me = User.query.filter_by(email=myemail).first()
-    score = data['score']
-    creator = data['creator']
+    score = data["score"]
+    creator = data["creator"]
 
     if creator:
-        ids = [int(id) for id in data['ids'].split(',')]
+        ids = [int(id) for id in data["ids"].split(",")]
         for id in ids:
             challenge = Challenge.query.get(id)
             challenge.creator_score = score
         db.session.commit()
-        return {'submitted': True}
+        return {"submitted": True}
     else:
-        id = int(data['id'])
+        id = int(data["id"])
         challenge = Challenge.query.get(id)
         challenge.invited_score = score
         chalenge_creator = challenge.creator
-        creator_state = 'lost' if score > challenge.creator_score else 'won'
+        creator_state = "lost" if score > challenge.creator_score else "won"
         body = "You {} the challenge to {}".format(creator_state, me.name)
         send_notification = Notification(
-            body=body, user=chalenge_creator, date_created=datetime.now())
-        if creator_state == 'won':
+            body=body, user=chalenge_creator, date_created=datetime.now()
+        )
+        if creator_state == "won":
             chalenge_creator.score += 50
         else:
             me.score += 50
         db.session.add(send_notification)
         db.session.commit()
-        return {'state': 'won' if score > challenge.creator_score else 'lost'}
+        return {"state": "won" if score > challenge.creator_score else "lost"}
 
 
 # @app.route('/submitchallenge', methods=['POST'])
@@ -405,20 +408,20 @@ def calc_mouth_vertical_horizontal_distances():
     image = request.files["image"]
     image_name = secure_filename(image.filename)
     image.save(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
-    vert, hori = calc_video_score(image_name, video=False)
+    mar = calc_video_score(image_name, video=False)
     os.remove(os.path.join(app.config["UPLOAD_FOLDER"], image_name))
-    return {"vertical_mouth_dist": vert, "horizontal_mouth_dist": hori}
+    return {"mouth_aspect_ratio": mar}
 
 
 @app.route("/image/end", methods=["POST"])
 def set_mouth_vertical_horizontal_distances():
     data = request.get_json()
     myemail = data["email"]
-    vert, hori = data["vertical_mouth_dist"], data["horizontal_mouth_dist"]
+    mar = data["mouth_aspect_ratio"]
     me = User.query.filter_by(email=myemail).first()
-    me.vertical_mouth_dist, me.horizontal_mouth_dist = vert, hori
+    me.mouth_aspect_ratio = mar
     db.session.commit()
-    return {"mouth_values_set": True}
+    return {"mar_set": True}
 
 
 # @app.route('/image', methods=['POST'])
@@ -461,7 +464,7 @@ def get_all_videos():
 
 @app.route("/db")
 def database():
-    # db.drop_all()
+    db.drop_all()
     db.create_all()
     # mido = User(name='mido', email='mido@rdq.com')
     # zeez = User(name='zeez', email='zeez@rdq.com')

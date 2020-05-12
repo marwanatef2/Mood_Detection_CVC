@@ -23,6 +23,7 @@ export default function Profile({ navigation }) {
     email: navigation.getParam("email"),
     name: navigation.getParam("name"),
     pic: navigation.getParam("picture"),
+    exists: navigation.getParam("exists"),
   });
 
   const [notifications, setNotifications] = useState(null);
@@ -37,6 +38,7 @@ export default function Profile({ navigation }) {
           myemail: user.email,
         })
         .then((res) => {
+          // console.log(res.data.notifications);
           setNotifications(res.data.notifications);
           setLoaded(true);
         });
@@ -55,6 +57,7 @@ export default function Profile({ navigation }) {
   const start = () => {
     navigation.navigate("StartChallenge", {
       email: user.email,
+      exists: user.exists,
     });
   };
   if (loaded)
@@ -84,6 +87,7 @@ export default function Profile({ navigation }) {
               start={start}
               notifications={notifications}
               email={user.email}
+              exists={user.exists}
             />
           </View>
           <FriendsList style={{}} loggedEmail={user.email} />

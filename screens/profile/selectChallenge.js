@@ -1,54 +1,75 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  FlatList,
-  Button,
-  Image,
-} from "react-native";
-import { Thumbnail } from "react-native-thumbnail-video";
+import { StyleSheet, Text, View, FlatList, Button } from "react-native";
 
+import { Thumbnail } from "react-native-thumbnail-video";
+import YouTube from "react-native-youtube";
 import axios from "axios";
-import { MaterialIcons } from "@expo/vector-icons";
-import * as VideoThumbnails from "expo-video-thumbnails";
+
+import Video from "./videoInfo";
 
 export default function StartChallenge({ start, navigation }) {
-  const [image, setImage] = useState(false);
-  // const challengers = navigation.state.params;
-  // console.log(challengers);
-
-  const generateThumbnail = async () => {
-    try {
-      const { uri } = await VideoThumbnails.getThumbnailAsync(
-        require("../../assets/videos/blog.mp4"),
-        {
-          time: 10000,
-        }
-      );
-      setImage(uri);
-    } catch (e) {
-      console.warn(e);
-    }
+  const challengers = navigation.state.params.challengers;
+  const loggedEmail = navigation.state.params.loggedEmail;
+  const exists = navigation.state.params.exists;
+  const [videos, setVideos] = useState([]);
+  const getVideos = async () => {
+    axios
+      .get("https://marwanatef2.pythonanywhere.com/videos")
+      .then((res) => {
+        setVideos(res.data.videos);
+      })
+      .catch((err) => console.log(err));
   };
 
+  useEffect(() => {
+    getVideos();
+  }, []);
+  const handleStartChallenge = (id, uri) => {
+    console.log(id);
+    axios
+      .post("https://marwanatef2.pythonanywhere.com/challenge", {
+        myemail: loggedEmail,
+        emails: challengers,
+        video_id: id,
+      })
+      .then((res) => {
+        console.log(res.data);
+        navigation.navigate("Camera", {
+          uri: uri,
+          email: loggedEmail,
+          challengesID: res.data.challenges_ids,
+          mar: res.data.mouth_aspect_ratio,
+          exists: exists,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
   return (
     <View style={styles.container}>
-      <Button onPress={generateThumbnail} title="Generate thumbnail" />
-      {image && (
-        <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-      )}
-      <Text>{image}</Text>
-      <Thumbnail
-        url="https://www.youtube.com/watch?v=3gArYyLwPqI"
-        showPlayIcon={false}
-        onPress={() => console.log("pressed zeez")}
-        imageHeight={200}
-        imageWidth={200}
-        containerStyle={{ borderRadius: 100, overflow: "hidden" }}
-      />
+      <Text
+        style={{
+          fontSize: 30,
+          fontFamily: "nunito-bold",
+        }}
+      >
+        Select Video
+      </Text>
+      <View
+        style={{
+          padding: 20,
+          marginVertical: 10,
+        }}
+      >
+        {videos ? (
+          <FlatList
+            data={videos}
+            keyExtractor={(item) => item.uri}
+            renderItem={({ item }) => (
+              <Video video={item} onPress={handleStartChallenge} />
+            )}
+          />
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -56,8 +77,10 @@ export default function StartChallenge({ start, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    flexDirection: "column",
+    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#F5FCFF",
+    padding: 10,
   },
 });

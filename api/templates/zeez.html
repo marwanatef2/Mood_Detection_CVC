@@ -12,7 +12,11 @@
   <body>
     <p id="name">{{userinfo["name"]}}</p>
     <p id="email">{{userinfo["email"]}}</p>
+    {% comment %}
     <p id="picture">{{userinfo["picture"]}}</p>
+    {% endcomment %}
+    <p id="picture">{{userinfo["image"]}}</p>
+    <p id="exists">{{userinfo["exists"]}}</p>
 
     <!-- <a href="exp://192.168.1.110:19000?hello=worldzeez">My app</a> -->
 
@@ -20,10 +24,11 @@
       let name = document.getElementById("name").textContent;
       let email = document.getElementById("email").textContent;
       let picture = document.getElementById("picture").textContent;
+      let exists = document.getElementById("exists").textContent;
 
-      if (name !== "" && email !== "" && picture !== "")
+      if (name !== "" && email !== "" && picture !== "" && exists !== "")
         window.location.replace(
-          `exp://192.168.1.110:19000?name=${name}&email=${email}&pic=${picture}`
+          `exp://192.168.1.110:19000?name=${name}&email=${email}&pic=${picture}&exists=${exists}`
         );
     </script>
   </body>

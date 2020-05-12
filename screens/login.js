@@ -28,6 +28,7 @@ export default function home({ navigation }) {
       name: queryParams["name"],
       email: queryParams["email"],
       picture: queryParams["pic"],
+      exists: queryParams["exists"],
     };
 
     // Navigating to the profile screen and adding to it a param to retrieve that contains the user info

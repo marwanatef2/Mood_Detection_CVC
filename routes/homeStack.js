@@ -16,7 +16,7 @@ import App from "../screens/camera/draggable";
 
 const screens = {
   Home: {
-    screen: SelectChallege,
+    screen: Home,
     navigationOptions: ({ navigation }) => {
       return {
         headerTitle: () => <Header navigation={navigation} title="TITO" />,

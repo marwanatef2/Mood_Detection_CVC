@@ -17,6 +17,7 @@ import Friend from "./freind";
 
 export default function StartChallenge({ start, navigation }) {
   const loggedEmail = navigation.getParam("email");
+  const exists = navigation.getParam("exists");
   const [friends, setFriends] = useState([]);
   const [loaad, setLoaded] = useState(false);
   let challengers = [];
@@ -30,7 +31,11 @@ export default function StartChallenge({ start, navigation }) {
     // console.log(challengers);
   };
   const handleNext = () => {
-    navigation.navigate("SelectChallenge", challengers);
+    navigation.navigate("SelectChallenge", {
+      challengers: challengers,
+      loggedEmail: loggedEmail,
+      exists,
+    });
     // axios
     //   .post("https://marwanatef2.pythonanywhere.com/challenge", {
     //     myemail: loggedEmail,
@@ -91,6 +96,7 @@ export default function StartChallenge({ start, navigation }) {
         <FlatList
           contentContainerStyle={{ paddingBottom: 0 }}
           data={friends}
+          keyExtractor={(item) => item.email}
           renderItem={({ item }) => (
             <Friend
               name={item.name}

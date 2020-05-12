@@ -7,6 +7,7 @@ import {
   Modal,
   TouchableWithoutFeedback,
   Keyboard,
+  TouchableOpacity,
 } from "react-native";
 
 import { MaterialIcons } from "@expo/vector-icons";
@@ -38,13 +39,16 @@ export default function Modall({ notifications, modalStatus, closeModal }) {
             </Text>
             <FlatList
               contentContainerStyle={{ paddingBottom: 20 }}
+              keyExtractor={(item) => item.datetime}
               data={notifications}
               renderItem={({ item }) => (
-                <Notification
-                  body={item.body}
-                  date={item.datetime}
-                  newS={item.new}
-                />
+                <TouchableOpacity onPress={() => console.log("pressed")}>
+                  <Notification
+                    body={item.body}
+                    date={item.datetime}
+                    newS={item.new}
+                  />
+                </TouchableOpacity>
               )}
               style={{
                 padding: 20,

@@ -5,7 +5,7 @@ import { Entypo } from "@expo/vector-icons";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import { Thumbnail } from "react-native-thumbnail-video";
 
-export default function Video({ video }) {
+export default function Video({ video, onPress }) {
   const [thumb, setThumb] = useState(false);
   const generateThumbnail = async (url) => {
     try {
@@ -23,7 +23,7 @@ export default function Video({ video }) {
   // }, []);
   return (
     <TouchableOpacity
-      onPress={() => console.log("video pressed")}
+      onPress={() => onPress(video.key, video.uri)}
       style={{
         flex: 1,
 
@@ -34,15 +34,16 @@ export default function Video({ video }) {
         marginVertical: 10,
       }}
     >
-      {thumb && (
-        <Thumbnail
-          url="https://www.youtube.com/watch?v=p32OC97aNqc&t"
-          style={{ width: 50, height: 50, borderRadius: 100 }}
-          showPlayIcon={false}
-          onPress={() => console.log(1)}
-        />
-      )}
-      <Text style={{ alignSelf: "center", marginHorizontal: 10 }}>{video}</Text>
+      <Thumbnail
+        url={video.youtube_link}
+        style={{ width: 50, height: 50, borderRadius: 100 }}
+        showPlayIcon={false}
+        onPress={() => console.log(1)}
+      />
+
+      <Text style={{ alignSelf: "center", marginHorizontal: 10 }}>
+        {video.name}
+      </Text>
     </TouchableOpacity>
   );
 }

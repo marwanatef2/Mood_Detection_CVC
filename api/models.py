@@ -28,8 +28,7 @@ class User(UserMixin, db.Model):
                                 lazy='dynamic')
     notifications = db.relationship('Notification', backref='user', lazy=True)
     last_checked = db.Column(db.DateTime, nullable=False, default=datetime.now())
-    vertical_mouth_dist = db.Column(db.Float)
-    horizontal_mouth_dist = db.Column(db.Float)
+    mouth_aspect_ratio = db.Column(db.Float)
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
