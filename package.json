@@ -10,7 +10,7 @@
   "dependencies": {
     "@react-native-community/cameraroll": "^1.6.0",
     "@react-native-community/masked-view": "^0.1.10",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "expo": "^37.0.8",
     "expo-av": "^8.1.0",
     "expo-camera": "^8.2.0",
